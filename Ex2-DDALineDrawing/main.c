@@ -1,5 +1,6 @@
 #include <GL/glut.h>
-
+#include <stdio.h>
+#include <math.h>
 
 void plotDivisionLines()    {
     glBegin(GL_LINES);
@@ -11,11 +12,19 @@ void plotDivisionLines()    {
 }
 
 
-void plotLineDDA(start_x, start_y, end_x, end_y)  {
+void plotPoint(int x, int y)    {
+    glBegin(GL_POINTS);
+    glVertex2d(x, y);
+    glEnd();
+}
+
+
+void plotLineDDA(int start_x, int start_y, int end_x, int end_y)  {
     
-    float slope = (end_y - end_x) / (start_x - start_y);
+    float slope = (float) (end_y - start_y)/(end_x - start_x);
     float abs_slope = slope;
-    short l_to_r;
+    
+    short delta_sign = (start_x <= end_x ? 1 : -1); 
     
     if(slope>0) {
         abs_slope = slope;
@@ -23,12 +32,45 @@ void plotLineDDA(start_x, start_y, end_x, end_y)  {
     else    {
         abs_slope = -1 * slope;
     }
+
+    float dx, dy;
+    short check_x;
+    if(abs_slope <= 1)  {
+        dx = (float) (1/abs_slope) * delta_sign;
+        dy = (float) 1 * delta_sign;
+        check_x = 0;
+    }
+    else    {
+        dx = (float) 1 * delta_sign;
+        dy = (float) abs_slope * delta_sign;
+        check_x = 1;
+    }
+
+    printf("Slope: %f\n", slope);
+    printf("dx: %f, dy: %f\n", dx, dy);
+    printf("check_x: %d, delta_sign: %d\n", check_x, delta_sign);
+
+    int x_ = start_x;
+    int y_ = start_y;
+    float x_val = start_x; 
+    float y_val = start_y;
+    plotPoint(x_, y_);
+    while((check_x && end_x!=x_) || (!check_x && end_y!=y_))    {
+        x_val += dx;
+        y_val += dy;
+        x_ = (int) round(x_val);
+        y_ = (int) round(y_val);
+        plotPoint(x_, y_);
+        printf("\nx: %d, y: %d", x_, y_);
+        fflush(stdout);
+    }
 }
 
 
-void display()  {
+void display(start_x, start_y, end_x, end_y)  {
     glClear(GL_COLOR_BUFFER_BIT);
     plotDivisionLines();
+    plotLineDDA(start_x, start_y, end_x, end_y);
     glFlush();
 }
 
@@ -46,7 +88,7 @@ void init() {
 int main(int argc,char* argv[]) {
     glutInit(&argc,argv);
     glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
-    glutInitWindowSize(640,480);
+    glutInitWindowSize(640, 480);
     glutCreateWindow("Ex2 - DDA Line Drawing");
     glutDisplayFunc(display);
     init();
