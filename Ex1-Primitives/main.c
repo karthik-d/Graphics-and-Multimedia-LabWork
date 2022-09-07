@@ -166,12 +166,12 @@ void display()    {
 
 
 void init()   {
-    glClearColor(1.0,1.0,1.0,0.0);
-    glColor3f(0.0f,0.0f,0.0f);
+    glClearColor(1.0, 1.0, 1.0,0.0);
+    glColor3f(0.0f, 0.0f, 0.0f);
     glPointSize(10);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0.0,640.0,0.0,480.0);
+    gluOrtho2D(0.0, 640.0, 0.0, 480.0);
 }
 
 
