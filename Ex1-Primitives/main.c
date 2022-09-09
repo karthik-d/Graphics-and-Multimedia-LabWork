@@ -402,14 +402,14 @@ void init()   {
     glPointSize(10);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0.0, 640.0, 0.0, 480.0);
+    gluOrtho2D(0.0, 800.0, 0.0, 600.0);
 }
 
 
 int main(int argc,char* argv[]) {
     glutInit(&argc,argv);
     glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
-    glutInitWindowSize(640,480);
+    glutInitWindowSize(800, 600);
     // primitives
     // glutCreateWindow("Ex1A - OpenGL Primitives");
     // glutDisplayFunc(display_primitives);
