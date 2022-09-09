@@ -2,23 +2,38 @@
 #include <stdio.h>
 
 
-void plotPoint(int x, int y)    {
+void plotPoint(int x, int y, int x_offset, int y_offset)    {
     glBegin(GL_POINTS);
-    glVertex2d(x, y);
+    glVertex2d(x + x_offset, y + y_offset);
     glEnd();
 }
 
 
 void plotCircle(int center_x, int center_y, int radius) {
-    x_k = 0;
-    y_k = radius;
-    p_k = 1 - radius;
+    int x_k = 0;
+    int y_k = radius;
+    int p_k = 1 - radius;
     
-    while(x_k >= y_k)   {
+    plotPoint(x_k, y_k, center_x, center_y);
+    while(x_k <= y_k)   {
         if(p_k < 0) {
-
+            plotPoint(x_k + 1, y_k, center_x, center_y);
+            x_k += 1;
+            p_k += (2*x_k) + 1;
         }
+        else{
+            plotPoint(x_k + 1, y_k - 1, center_x, center_y);
+            x_k += 1;
+            y_k += -1;
+            p_k += (2*x_k) - (2*y_k) + 1;
+        }
+        printf("\n(%d, %d)", x_k, y_k);
     }
+}
+
+
+void display_figure()   {
+    ;
 }
 
 
@@ -50,8 +65,8 @@ int main(int argc, char **argv)  {
     glutDisplayFunc(display_circle);
     
     // figure
-    glutCreateWindow("Ex4b - Figure with Circles");
-    glutDisplayFunc(display_figure);
+    // glutCreateWindow("Ex4b - Figure with Circles");
+    // glutDisplayFunc(display_figure);
 
     init();
     glutMainLoop();    
