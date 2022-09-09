@@ -100,18 +100,18 @@ void plotLabels()   {
     markString("C(170, 390)", 170, 390, -5, 5, 0);
     markString("D(120, 460)", 120, 460, -5, 5, 0);
 
-    markString("TRAINGLES", 300, 460, 0, 0, 1);
+    markString("TRIANGLES", 300, 460, 0, 0, 1);
     markString("A(230, 350)", 230, 350, 5, -10, 0);
     markString("B(230, 450)", 230, 450, 5, 5, 0);
     markString("C(370, 400)", 370, 400, -20, 10, 0);
 
-    markString("TRAINGLE STRIP", 240, 310, 0, 0, 1);
+    markString("TRIANGLE STRIP", 240, 310, 0, 0, 1);
     markString("A(230, 190)", 230, 190, 5, -10, 0);
     markString("B(230, 240)", 230, 240, -20, 15, 0);
     markString("C(380, 210)", 380, 210, -10, 10, 0);
     markString("D(300, 280)", 300, 280, -20, 10, 0);
 
-    markString("TRAINGLE FAN", 240, 150, 0, 0, 1);
+    markString("TRIANGLE FAN", 240, 150, 0, 0, 1);
     markString("A(230, 30)", 230, 30, 5, -10, 0);
     markString("B(230, 120)", 230, 120, -20, 15, 0);
     markString("C(380, 150)", 380, 150, -10, 10, 0);
@@ -123,19 +123,13 @@ void plotLabels()   {
     markString("C(450, 350)", 450, 350, 25, 0, 0);
     markString("D(600, 400)", 600, 400, -20, 10, 0);
 
-    markString("QUAD STRIP", 500, 460, 0, 0, 1);
-    markString("A(500, 320)", 500, 320, 20, -5, 0);
-    markString("B(400, 290)", 400, 290, -40, -30, 0);
-    markString("D(450, 190)", 450, 190, -20, 10, 0);
-    markString("C(480, 270)", 480, 270, 25, 0, 0);
-    markString("D(620, 350)", 620, 350, -20, 10, 0);
+    markString("QUAD STRIP", 500, 310, 0, 0, 1);
+    markString("A(500, 320)", 500, 320, 10, -5, 0);
+    markString("B(480, 230)", 480, 230, -55, 10, 0);
+    markString("C(550, 190)", 550, 190, -70, 0, 0);
+    markString("D(600, 310)", 600, 310, -20, 0, 0);
+    markString("E(620, 350)", 620, 220, -35, -25, 0);
 
-    (480, 160);
-    glVertex2d(560, 160);
-    glVertex2d(600, 70);
-    glVertex2d(560, 40);
-    glVertex2d(480, 40);
-    glVertex2d(410, 90);
     markString("POLYGONS", 500, 180, 0, 0, 1);
     markString("A(480, 160)", 480, 160, 10, 5, 0);
     markString("B(560, 160)", 560, 160, 20, -5, 0);
@@ -218,10 +212,11 @@ void plotQuads()    {
 void plotQuadStrip()    {
     glBegin(GL_QUAD_STRIP);
     glVertex2d(500, 320);
-    glVertex2d(400, 290);
-    glVertex2d(450, 190);
-    glVertex2d(480, 270);
-    glVertex2d(620, 350);
+    glVertex2d(480, 230);
+    glVertex2d(540, 300);
+    glVertex2d(550, 190);
+    glVertex2d(600, 310);
+    glVertex2d(620, 220);
     glEnd();
 }
 
@@ -238,7 +233,7 @@ void plotPolygon()    {
 }
 
 
-void display()    {
+void display_primitives()    {
     glClear(GL_COLOR_BUFFER_BIT);
     plotPoints();
     plotLabels();
@@ -252,6 +247,52 @@ void display()    {
     plotQuads();
     plotQuadStrip();
     plotPolygon();
+    glFlush();
+}
+
+
+void plotBlackBox(int topleft_x, int topleft_y, int dimension) {
+    glBegin(GL_QUADS);
+    glVertex2d(topleft_x, topleft_y);
+    glVertex2d(topleft_x+dimension, topleft_y);
+    glVertex2d(topleft_x+dimension, topleft_y+dimension);
+    glVertex2d(topleft_x, topleft_y+dimension);
+    glEnd();
+}
+
+
+void plotWhiteBox(int topleft_x, int topleft_y, int dimension) {
+    glBegin(GL_LINE_LOOP);
+    glVertex2d(topleft_x, topleft_y);
+    glVertex2d(topleft_x+dimension, topleft_y);
+    glVertex2d(topleft_x+dimension, topleft_y+dimension);
+    glVertex2d(topleft_x, topleft_y+dimension);
+    glEnd();
+}
+
+
+void plotCheckboard(int n_rows, int n_cols, int topleft_x, int topleft_y, int dimension) {
+    int x_posn = topleft_x;
+    int y_posn = topleft_y;
+    for(int i=0; i<n_rows; i++)    {
+        for(int j=0; j<n_cols; j++) {
+            if((i+j)%2==0){
+                plotBlackBox(x_posn, y_posn, dimension);
+            }
+            else{
+                plotWhiteBox(x_posn, y_posn, dimension);
+            }
+            y_posn += dimension;
+        }
+        x_posn += dimension;
+        y_posn = topleft_y;
+    }
+}
+
+
+void display_checkboard()   {
+    glClear(GL_COLOR_BUFFER_BIT);
+    plotCheckboard(8, 8, 160, 80, 40);
     glFlush();
 }
 
@@ -270,8 +311,12 @@ int main(int argc,char* argv[]) {
     glutInit(&argc,argv);
     glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
     glutInitWindowSize(640,480);
-    glutCreateWindow("Ex1A - OpenGL Primitives");
-    glutDisplayFunc(display);
+    // primitives
+    // glutCreateWindow("Ex1A - OpenGL Primitives");
+    // glutDisplayFunc(display_primitives);
+    // primitives
+    glutCreateWindow("Ex1B - Checkboard Pattern");
+    glutDisplayFunc(display_checkboard);
     init();
     glutMainLoop();
     return 1;
