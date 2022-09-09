@@ -2,6 +2,24 @@
 #include <stdio.h>
 
 
+void renderSpacedBitmapString(float x, float y, void *font, char *string) {
+    char *c;
+    int x1 = x;
+    for (c = string; *c != '\0'; c++) {
+        glRasterPos2f(x1, y);
+        glutBitmapCharacter(font, *c);
+        x1 = x1 + glutBitmapWidth(font, *c);
+    }
+}
+
+
+void markString(char *string, int x, int y, int x_offset, int y_offset) {
+    glColor3f(255.0, 0, 0.0); // red color
+    renderSpacedBitmapString(x+x_offset, y+y_offset, GLUT_BITMAP_HELVETICA_12, string);
+    glFlush();
+}
+
+
 void plotPoint(int x, int y, int x_offset, int y_offset)    {
     glBegin(GL_POINTS);
     glVertex2d(x + x_offset, y + y_offset);
@@ -51,8 +69,13 @@ void display_figure()   {
 
 void display_circle()   {
     glClear(GL_COLOR_BUFFER_BIT);
+
     plotCircle(0, 0, 80);
+    markString("C(0,0)\nR80", 0, 0, 5, 5);
+    
+    glColor3f(0.0f, 0.0f, 0.0f);
     plotCircle(160, 120, 40);
+    markString("C(160,120)\nR80", 160, 120, 5, 5);
     glFlush();
 }
 
