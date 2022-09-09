@@ -407,18 +407,23 @@ void init()   {
 
 
 int main(int argc,char* argv[]) {
+
     glutInit(&argc,argv);
     glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
-    glutInitWindowSize(800, 600);
+    glutInitWindowSize(640, 480);
+    
     // primitives
     // glutCreateWindow("Ex1A - OpenGL Primitives");
     // glutDisplayFunc(display_primitives);
+    
     // checkboard
     // glutCreateWindow("Ex1B - Checkboard Pattern");
     // glutDisplayFunc(display_checkboard);
+    
     // house
     glutCreateWindow("Ex1C - House");
     glutDisplayFunc(display_house);
+
     init();
     glutMainLoop();
     return 1;
