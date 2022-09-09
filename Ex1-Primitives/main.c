@@ -1,16 +1,44 @@
-#include<GL/glut.h>
+#include <GL/glut.h>
+#include <stdio.h>
+
+#define BUFFER_SIZE 200
+
+
+void renderSpacedBitmapString(float x, float y, void *font, char *string) {
+    char *c;
+    int x1 = x;
+    for (c = string; *c != '\0'; c++) {
+        glRasterPos2f(x1, y);
+        glutBitmapCharacter(font, *c);
+        x1 = x1 + glutBitmapWidth(font, *c);
+    }
+}
+
+
+void markString(char *string, int x, int y, int x_offset, int y_offset) {
+    glColor3f(255.0, 0, 0.0); // red color
+    printf("\n%s", string);
+    renderSpacedBitmapString(x+x_offset, y+y_offset, GLUT_BITMAP_HELVETICA_12, string);
+    glFlush();
+}
 
 
 // POINTS, LINES, LINE_STRIP, LINE_LOOP, TRIANGLES, TRIANGLE STRIP,
 // TRIANGLE FAN, QUADS, QUAD_STRIP, POLYGON
 
 void plotPoints()   {
+    char *point_label = (char*)malloc(sizeof(char)*BUFFER_SIZE);
     glBegin(GL_POINTS);
     // line
+    sprintf(point_label, "(%d, %d)", 20, 30);
     glVertex2d(20, 30);
+    markString(point_label, 20, 30, 0, 0);
     glVertex2d(130, 40);
+    markString("(130, 40)", 130, 40, 5, 5);
     glVertex2d(170, 50);
+    markString("(170, 50)", 170, 50, 5, 5);
     glVertex2d(120, 140);
+    markString("(120, 140)", 120, 140, 5, 5);
     // line strip
     glVertex2d(20, 190);
     glVertex2d(130, 200);
@@ -152,6 +180,7 @@ void plotPolygon()    {
 void display()    {
     glClear(GL_COLOR_BUFFER_BIT);
     plotPoints();
+    glColor3f(0.0f, 0.0f, 0.0f);
     plotLines();
     plotLineStrip();
     plotLineLoop();
