@@ -9,25 +9,37 @@ void plotPoint(int x, int y, int x_offset, int y_offset)    {
 }
 
 
+void plotAtAllOctants(int x, int y, int x_offset, int y_offset) {
+    plotPoint(x, y, x_offset, y_offset);
+    plotPoint(y, x, x_offset, y_offset);
+    plotPoint(x, -y, x_offset, y_offset);
+    plotPoint(y, -x, x_offset, y_offset);
+    plotPoint(-x, y, x_offset, y_offset);
+    plotPoint(-y, x, x_offset, y_offset);
+    plotPoint(-x, -y, x_offset, y_offset);
+    plotPoint(-y, -x, x_offset, y_offset);
+}
+
+
 void plotCircle(int center_x, int center_y, int radius) {
     int x_k = 0;
     int y_k = radius;
     int p_k = 1 - radius;
     
-    plotPoint(x_k, y_k, center_x, center_y);
+    plotPoint(center_x, center_y, 0, 0);
+    plotAtAllOctants(x_k, y_k, center_x, center_y);
     while(x_k <= y_k)   {
         if(p_k < 0) {
-            plotPoint(x_k + 1, y_k, center_x, center_y);
+            plotAtAllOctants(x_k + 1, y_k, center_x, center_y);
             x_k += 1;
             p_k += (2*x_k) + 1;
         }
         else{
-            plotPoint(x_k + 1, y_k - 1, center_x, center_y);
+            plotAtAllOctants(x_k + 1, y_k - 1, center_x, center_y);
             x_k += 1;
             y_k += -1;
             p_k += (2*x_k) - (2*y_k) + 1;
         }
-        printf("\n(%d, %d)", x_k, y_k);
     }
 }
 
@@ -48,7 +60,7 @@ void display_circle()   {
 void init() {
     glClearColor(1.0, 1.0, 1.0, 0.0);
     glColor3f(0.0f, 0.0f, 0.0f);
-    glPointSize(10);
+    glPointSize(4);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluOrtho2D(-320.0, 320.0, -240.0, 240.0);
