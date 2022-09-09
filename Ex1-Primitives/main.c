@@ -233,24 +233,6 @@ void plotPolygon()    {
 }
 
 
-void display_primitives()    {
-    glClear(GL_COLOR_BUFFER_BIT);
-    plotPoints();
-    plotLabels();
-    glColor3f(0.0f, 0.0f, 0.0f);
-    plotLines();
-    plotLineStrip();
-    plotLineLoop();
-    plotTriangles();
-    plotTriangleStrip();
-    plotTriangleFan();
-    plotQuads();
-    plotQuadStrip();
-    plotPolygon();
-    glFlush();
-}
-
-
 void plotBlackBox(int topleft_x, int topleft_y, int dimension) {
     glBegin(GL_QUADS);
     glVertex2d(topleft_x, topleft_y);
@@ -290,9 +272,126 @@ void plotCheckboard(int n_rows, int n_cols, int topleft_x, int topleft_y, int di
 }
 
 
+void plotHouse()    {
+    // Roof
+    glColor3f(0.3, 0.5, 0.8);
+    glBegin(GL_POLYGON);
+    glVertex2d(200, 500);
+    glVertex2d(600, 500);
+    glVertex2d(700, 350);
+    glVertex2d(300, 350);
+    glEnd();
+    // Top of Front Wall
+    glColor3f(0.1, 0.5, 0.0);
+    glBegin(GL_TRIANGLES);
+    glVertex2d(200, 500);
+    glVertex2d(100, 350);
+    glVertex2d(300, 350);
+    glEnd();
+    // Front Wall
+    glColor3f(0.7, 0.2, 0.3);
+    glBegin(GL_POLYGON);
+    glVertex2d(100, 350);
+    glVertex2d(300, 350);
+    glVertex2d(300, 100);
+    glVertex2d(100, 100);
+    glEnd();
+    // Front Door
+    glColor3f(0.7, 0.2, 0.9);
+    glBegin(GL_POLYGON);
+    glVertex2d(150, 250);
+    glVertex2d(250, 250);
+    glVertex2d(250, 100);
+    glVertex2d(150, 100);
+    glEnd();
+    // Front Door Lock
+    glColor3f(0.3, 0.7, 0.9);
+    glPointSize(15);
+    glBegin(GL_POINTS);
+    glVertex2d(170, 170);
+    glEnd();
+    //  Side Wall
+    glColor3f(0.1, 0.2, 0.3);
+    glBegin(GL_POLYGON);
+    glVertex2d(300, 350);
+    glVertex2d(700, 350);
+    glVertex2d(700, 100);
+    glVertex2d(300, 100);
+    glEnd();
+    // Window one
+    glColor3f(0.2, 0.4, 0.3);
+    glBegin(GL_POLYGON);
+    glVertex2d(330, 320);
+    glVertex2d(450, 320);
+    glVertex2d(450, 230);
+    glVertex2d(330, 230);
+    glEnd();
+    // line of window one
+    glColor3f(0.1, 0.7, 0.5);
+    glLineWidth(5);
+    glBegin(GL_LINES);
+    glVertex2d(390, 320);
+    glVertex2d(390, 230);
+    glVertex2d(330, 273);
+    glVertex2d(450, 273);
+    glEnd();
+    // Window two
+    glColor3f(0.2, 0.4, 0.3);
+    glBegin(GL_POLYGON);
+    glVertex2d(530, 320);
+    glVertex2d(650, 320);
+    glVertex2d(650, 230);
+    glVertex2d(530, 230);
+    glEnd();
+    // lines of window two
+    glColor3f(0.1, 0.7, 0.5);
+    glLineWidth(5);
+    glBegin(GL_LINES);
+    glVertex2d(590, 320);
+    glVertex2d(590, 230);
+    glVertex2d(530, 273);
+    glVertex2d(650, 273);
+    glEnd();
+    // Entrance Path
+    glColor3f(0.3, 0.5, 0.7);
+    glLineWidth(3);
+    glBegin(GL_POLYGON);
+    glVertex2d(150, 100);
+    glVertex2d(250, 100);
+    glVertex2d(210, 0);
+    glVertex2d(40, 0);
+    glEnd();
+}
+
+
+void display_primitives()    {
+    glClear(GL_COLOR_BUFFER_BIT);
+    plotPoints();
+    plotLabels();
+    glColor3f(0.0f, 0.0f, 0.0f);
+    plotLines();
+    plotLineStrip();
+    plotLineLoop();
+    plotTriangles();
+    plotTriangleStrip();
+    plotTriangleFan();
+    plotQuads();
+    plotQuadStrip();
+    plotPolygon();
+    glFlush();
+}
+
+
 void display_checkboard()   {
     glClear(GL_COLOR_BUFFER_BIT);
     plotCheckboard(8, 8, 160, 80, 40);
+    glFlush();
+}
+
+
+void display_house()    {
+    glClear(GL_COLOR_BUFFER_BIT);     
+    plotHouse();
     glFlush();
 }
 
@@ -314,9 +413,12 @@ int main(int argc,char* argv[]) {
     // primitives
     // glutCreateWindow("Ex1A - OpenGL Primitives");
     // glutDisplayFunc(display_primitives);
-    // primitives
-    glutCreateWindow("Ex1B - Checkboard Pattern");
-    glutDisplayFunc(display_checkboard);
+    // checkboard
+    // glutCreateWindow("Ex1B - Checkboard Pattern");
+    // glutDisplayFunc(display_checkboard);
+    // house
+    glutCreateWindow("Ex1C - House");
+    glutDisplayFunc(display_house);
     init();
     glutMainLoop();
     return 1;
