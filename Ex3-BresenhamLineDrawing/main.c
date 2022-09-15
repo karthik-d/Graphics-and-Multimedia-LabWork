@@ -88,6 +88,12 @@ void plotLineBresenham(int start_x, int start_y, int end_x, int end_y)  {
     //     fflush(stdout);
     // }
 
+    char *point_label = (char*)malloc(sizeof(char)*BUFFER_SIZE);
+    sprintf(point_label, "(%d, %d)", start_x, start_y);
+    markString(point_label, start_x, start_y, 20, 0);
+    sprintf(point_label, "(%d, %d)", end_x, end_y);
+    markString(point_label, end_x, end_y, 20, 0);
+
     int dx = end_x - start_x;
     int dy = end_y - start_x;
     float slope = dy / dx;
@@ -100,12 +106,16 @@ void plotLineBresenham(int start_x, int start_y, int end_x, int end_y)  {
         int temp;
         // exchange xs
         temp = start_x;
-        start_x = end_x;
-        end_x = temp;
+        start_x = start_y;
+        start_y = temp;
         // exchange ys
-        temp = start_y;
-        start_y = end_y;
-        end_y = temp;
+        temp = end_y;
+        end_y = end_x;
+        end_x = temp;
+        // exchnage ds
+        temp = dx;
+        dx = dy;
+        dy = temp;
     }
     
     int y_delta = 1;
@@ -125,9 +135,12 @@ void plotLineBresenham(int start_x, int start_y, int end_x, int end_y)  {
     int x_ = start_x;
     int y_ = start_y;
 
+    printf("\nexchange: %d", exchange_xy);
+    printf("\nstart - (%d, %d), end - (%d, %d)", start_x, start_y, end_x, end_y);
+    fflush(stdout);
     int p_k = (2*dy) - dx;
     exchange_xy ? plotPoint(y_, x_) : plotPoint(x_, y_);   
-    while(x_!=end_x)  {
+    while((!exchange_xy && x_!=end_x) || (exchange_xy && y_!=end_y))  {
         x_ += x_delta;
         if(p_k<0)   {
             exchange_xy ? plotPoint(y_, x_) : plotPoint(x_, y_);
@@ -140,12 +153,6 @@ void plotLineBresenham(int start_x, int start_y, int end_x, int end_y)  {
         }
         printf("\nx: %d, y: %d", x_, y_);
     }
-
-    char *point_label = (char*)malloc(sizeof(char)*BUFFER_SIZE);
-    sprintf(point_label, "(%d, %d)", start_x, start_y);
-    markString(point_label, start_x, start_y, 20, 0);
-    sprintf(point_label, "(%d, %d)", end_x, end_y);
-    markString(point_label, end_x, end_y, 20, 0);
 }
 
 
@@ -153,17 +160,17 @@ void display()  {
     glClear(GL_COLOR_BUFFER_BIT);
     plotDivisionLines();
     
-    // int start_x, start_y, end_x, end_y;
-    // printf("\nEnter Start Coordinates (x y): ");
-    // scanf(" %d %d", &start_x, &start_y);
-    // printf("Enter End Coordinates (x y): ");
-    // scanf(" %d %d", &end_x, &end_y);
+    int start_x, start_y, end_x, end_y;
+    printf("\nEnter Start Coordinates (x y): ");
+    scanf(" %d %d", &start_x, &start_y);
+    printf("Enter End Coordinates (x y): ");
+    scanf(" %d %d", &end_x, &end_y);
     
-    plotLineBresenham(40, 50, 110, 300);
-    // plotLineBresenham(start_x, start_y, end_x, end_y);
-    // plotLineBresenham(start_x, -start_y, end_x, -end_y);
-    // plotLineBresenham(-start_x, start_y, -end_x, end_y);
-    // plotLineBresenham(-start_x, -start_y, -end_x, -end_y);
+    // plotLineBresenham(40, 50, 110, 200);
+    plotLineBresenham(start_x, start_y, end_x, end_y);
+    plotLineBresenham(start_x, -start_y, end_x, -end_y);
+    plotLineBresenham(-start_x, start_y, -end_x, end_y);
+    plotLineBresenham(-start_x, -start_y, -end_x, -end_y);
 
     glFlush();
 }
