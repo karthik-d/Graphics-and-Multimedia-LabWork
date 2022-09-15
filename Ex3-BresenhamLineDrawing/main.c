@@ -112,12 +112,12 @@ void plotLineBresenham(int start_x, int start_y, int end_x, int end_y)  {
         temp = end_y;
         end_y = end_x;
         end_x = temp;
-        // exchnage ds
+        // exchange ds
         temp = dx;
         dx = dy;
         dy = temp;
     }
-    
+
     int y_delta = 1;
     if(dy < 0)  {
         // bottom to top
@@ -137,10 +137,11 @@ void plotLineBresenham(int start_x, int start_y, int end_x, int end_y)  {
 
     printf("\nexchange: %d", exchange_xy);
     printf("\nstart - (%d, %d), end - (%d, %d)", start_x, start_y, end_x, end_y);
+    printf("\nx_delta: %d, y_delta: %d", x_delta, y_delta);
     fflush(stdout);
     int p_k = (2*dy) - dx;
     exchange_xy ? plotPoint(y_, x_) : plotPoint(x_, y_);   
-    while((!exchange_xy && x_!=end_x) || (exchange_xy && y_!=end_y))  {
+    while(x_!=end_x)  {
         x_ += x_delta;
         if(p_k<0)   {
             exchange_xy ? plotPoint(y_, x_) : plotPoint(x_, y_);
@@ -151,7 +152,7 @@ void plotLineBresenham(int start_x, int start_y, int end_x, int end_y)  {
             exchange_xy ? plotPoint(y_, x_) : plotPoint(x_, y_);
             p_k += 2*(dy-dx);
         }
-        printf("\nx: %d, y: %d", x_, y_);
+        // printf("\nx: %d, y: %d", x_, y_);
     }
 }
 
