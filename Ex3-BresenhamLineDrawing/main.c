@@ -42,50 +42,84 @@ void plotPoint(int x, int y)    {
 
 void plotLineBresenham(int start_x, int start_y, int end_x, int end_y)  {
     
-    float slope = (float) (end_y - start_y)/(end_x - start_x);
-    float abs_slope = slope;
+    // float slope = (float) (end_y - start_y)/(end_x - start_x);
+    // float abs_slope = slope;
     
-    short dx_sign = (start_x <= end_x ? 1 : -1);
-    short dy_sign = (start_y <= end_y ? 1 : -1);
+    // short dx_sign = (start_x <= end_x ? 1 : -1);
+    // short dy_sign = (start_y <= end_y ? 1 : -1);
     
-    if(slope>0) {
-        abs_slope = slope;
-    }
-    else    {
-        abs_slope = -1 * slope;
+    // if(slope>0) {
+    //     abs_slope = slope;
+    // }
+    // else    {
+    //     abs_slope = -1 * slope;
+    // }
+
+    // float dx, dy;
+    // short check_x;
+    // if(abs_slope <= 1)  {
+    //     dx = (float) (1/abs_slope) * dx_sign;
+    //     dy = (float) 1 * dy_sign;
+    //     check_x = 0;
+    // }
+    // else    {
+    //     dx = (float) 1 * dx_sign;
+    //     dy = (float) abs_slope * dy_sign;
+    //     check_x = 1;
+    // }
+
+    // printf("\nslope: %f\n", slope);
+    // printf("dx: %f, dy: %f\n", dx, dy);
+    // printf("check_x: %d\n", check_x);
+
+    // int x_ = start_x;
+    // int y_ = start_y;
+    // float x_val = start_x;
+    // float y_val = start_y;
+    // plotPoint(x_, y_);
+    // while((check_x && end_x!=x_) || (!check_x && end_y!=y_))    {
+    //     x_val += dx;
+    //     y_val += dy;
+    //     x_ = (int) round(x_val);
+    //     y_ = (int) round(y_val);
+    //     plotPoint(x_, y_);
+    //     // printf("\nx: %d, y: %d", x_, y_);
+    //     fflush(stdout);
+    // }
+
+    int dy = end_y - start_x;
+    int y_delta = 1;
+    if(dy < 0)  {
+        // bottom to top
+        y_delta = -1;
+        dy *= -1;
     }
 
-    float dx, dy;
-    short check_x;
-    if(abs_slope <= 1)  {
-        dx = (float) (1/abs_slope) * dx_sign;
-        dy = (float) 1 * dy_sign;
-        check_x = 0;
-    }
-    else    {
-        dx = (float) 1 * dx_sign;
-        dy = (float) abs_slope * dy_sign;
-        check_x = 1;
+    int dx = end_x - start_x;
+    int x_delta = 1;
+    if(dx < 0)  {
+        // right to left
+        x_delta = -1;
+        dx *= -1;
     }
 
-    printf("\nslope: %f\n", slope);
-    printf("dx: %f, dy: %f\n", dx, dy);
-    printf("check_x: %d\n", check_x);
-
+    int p_k = (2*dy) - dx;
     int x_ = start_x;
     int y_ = start_y;
-    float x_val = start_x;
-    float y_val = start_y;
-    plotPoint(x_, y_);
-    while((check_x && end_x!=x_) || (!check_x && end_y!=y_))    {
-        x_val += dx;
-        y_val += dy;
-        x_ = (int) round(x_val);
-        y_ = (int) round(y_val);
-        plotPoint(x_, y_);
-        // printf("\nx: %d, y: %d", x_, y_);
-        fflush(stdout);
+    plotPoint(x_, y_);    
+    while(x_!=end_x)  {
+        x_ += x_delta;
+        if(p_k<0)   {
+            plotPoint(x_, y_);
+            p_k += 2 * dy;
+        }
+        else    {
+            y_ += y_delta;
+            plotPoint(x_, y_);
+            p_k += 2*(dy-dx);
+        }
     }
+
     char *point_label = (char*)malloc(sizeof(char)*BUFFER_SIZE);
     sprintf(point_label, "(%d, %d)", start_x, start_y);
     markString(point_label, start_x, start_y, 20, 0);
@@ -104,11 +138,11 @@ void display()  {
     printf("Enter End Coordinates (x y): ");
     scanf(" %d %d", &end_x, &end_y);
     
-    plotLineBresenham(10, -20, 100, -80);
-    // plotLineBresenham(start_x, start_y, end_x, end_y);
-    // plotLineBresenham(start_x, -start_y, end_x, -end_y);
-    // plotLineBresenham(-start_x, start_y, -end_x, end_y);
-    // plotLineBresenham(-start_x, -start_y, -end_x, -end_y);
+    // plotLineBresenham(10, -20, 100, -80);
+    plotLineBresenham(start_x, start_y, end_x, end_y);
+    plotLineBresenham(start_x, -start_y, end_x, -end_y);
+    plotLineBresenham(-start_x, start_y, -end_x, end_y);
+    plotLineBresenham(-start_x, -start_y, -end_x, -end_y);
 
     glFlush();
 }
