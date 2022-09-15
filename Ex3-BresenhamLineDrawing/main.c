@@ -34,6 +34,7 @@ void markString(char *string, int x, int y, int x_offset, int y_offset) {
 
 
 void plotPoint(int x, int y)    {
+    glColor3f(0.0, 0, 0.0); // black color
     glBegin(GL_POINTS);
     glVertex2d(x, y);
     glEnd();
@@ -87,7 +88,26 @@ void plotLineBresenham(int start_x, int start_y, int end_x, int end_y)  {
     //     fflush(stdout);
     // }
 
+    int dx = end_x - start_x;
     int dy = end_y - start_x;
+    float slope = dy / dx;
+
+    short exchange_xy = 0;
+    if(slope>1 || slope<-1) {
+        // interchange x and y for computations, 
+        // and change back when plotting
+        exchange_xy = 1;
+        int temp;
+        // exchange xs
+        temp = start_x;
+        start_x = end_x;
+        end_x = temp;
+        // exchange ys
+        temp = start_y;
+        start_y = end_y;
+        end_y = temp;
+    }
+    
     int y_delta = 1;
     if(dy < 0)  {
         // bottom to top
@@ -95,7 +115,6 @@ void plotLineBresenham(int start_x, int start_y, int end_x, int end_y)  {
         dy *= -1;
     }
 
-    int dx = end_x - start_x;
     int x_delta = 1;
     if(dx < 0)  {
         // right to left
@@ -103,21 +122,23 @@ void plotLineBresenham(int start_x, int start_y, int end_x, int end_y)  {
         dx *= -1;
     }
 
-    int p_k = (2*dy) - dx;
     int x_ = start_x;
     int y_ = start_y;
-    plotPoint(x_, y_);    
+
+    int p_k = (2*dy) - dx;
+    exchange_xy ? plotPoint(y_, x_) : plotPoint(x_, y_);   
     while(x_!=end_x)  {
         x_ += x_delta;
         if(p_k<0)   {
-            plotPoint(x_, y_);
+            exchange_xy ? plotPoint(y_, x_) : plotPoint(x_, y_);
             p_k += 2 * dy;
         }
         else    {
             y_ += y_delta;
-            plotPoint(x_, y_);
+            exchange_xy ? plotPoint(y_, x_) : plotPoint(x_, y_);
             p_k += 2*(dy-dx);
         }
+        printf("\nx: %d, y: %d", x_, y_);
     }
 
     char *point_label = (char*)malloc(sizeof(char)*BUFFER_SIZE);
@@ -132,17 +153,17 @@ void display()  {
     glClear(GL_COLOR_BUFFER_BIT);
     plotDivisionLines();
     
-    int start_x, start_y, end_x, end_y;
-    printf("\nEnter Start Coordinates (x y): ");
-    scanf(" %d %d", &start_x, &start_y);
-    printf("Enter End Coordinates (x y): ");
-    scanf(" %d %d", &end_x, &end_y);
+    // int start_x, start_y, end_x, end_y;
+    // printf("\nEnter Start Coordinates (x y): ");
+    // scanf(" %d %d", &start_x, &start_y);
+    // printf("Enter End Coordinates (x y): ");
+    // scanf(" %d %d", &end_x, &end_y);
     
-    // plotLineBresenham(10, -20, 100, -80);
-    plotLineBresenham(start_x, start_y, end_x, end_y);
-    plotLineBresenham(start_x, -start_y, end_x, -end_y);
-    plotLineBresenham(-start_x, start_y, -end_x, end_y);
-    plotLineBresenham(-start_x, -start_y, -end_x, -end_y);
+    plotLineBresenham(40, 50, 110, 300);
+    // plotLineBresenham(start_x, start_y, end_x, end_y);
+    // plotLineBresenham(start_x, -start_y, end_x, -end_y);
+    // plotLineBresenham(-start_x, start_y, -end_x, end_y);
+    // plotLineBresenham(-start_x, -start_y, -end_x, -end_y);
 
     glFlush();
 }
@@ -161,7 +182,7 @@ int main(int argc,char* argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
     glutInitWindowSize(640, 480);
-    glutCreateWindow("Ex2 - DDA Line Drawing");
+    glutCreateWindow("Ex3 - Bresenham's Line Drawing");
     glutDisplayFunc(display);
     init();
     glutMainLoop();
