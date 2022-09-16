@@ -1,6 +1,6 @@
 # UCS1712-GraphicsAndMultimedia-LabWork
 
-Programs, reports, documentation and screenshots implemented and designed for the laboratory coursework on UCS1712: Graphics and Multimedia course 
+Programs, reports, documentation and screenshots implemented and designed for the laboratory coursework in UCS1712: Graphics and Multimedia Lab 
 
 ## Exercises
 
