@@ -1,3 +1,7 @@
+# UCS1712-GraphicsAndMultimedia-LabWork
+
+Programs, reports, documentation and screenshots implemented and designed for the laboratory coursework in UCS1712: Graphics and Multimedia Lab 
+
 ## Exercises
 
 1. [Study of Basic Output Primitives in C++ using OpenGL](./Ex1-Primitives)
