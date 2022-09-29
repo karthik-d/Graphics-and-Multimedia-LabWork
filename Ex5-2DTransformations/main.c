@@ -227,7 +227,6 @@ void plotRotatedTriangle(int *xs, int *ys, int xr, int yr, int theta)    {
     glBegin(GL_TRIANGLES);
     
     float **triangle_matrix = makeTriangleMatrix(xs, ys);
-    displayMatrix(triangle_matrix, 3, 3);
     
     float **rotated_triangle = multiplyMatrices(
         makeTranslationMatrix(xr, yr),
@@ -350,7 +349,6 @@ void plotShearedTriangle(int *xs, int *ys, float xshear, float yshear, int yref,
     glBegin(GL_TRIANGLES);
     
     float **triangle_matrix = makeTriangleMatrix(xs, ys);
-    // displayMatrix(triangle_matrix, 3, 3);
 
     // without translating for display
     float **actual_result = multiplyMatrices(
@@ -410,7 +408,7 @@ void display_transforms()   {
     int tx = -100;
     int ty = -50;
     plotTranslatedTriangle(xs, ys, -100, -50);
-    // // label translation
+    // label translation
     char *string = (char*)malloc(sizeof(char)*100);
     sprintf(string, "Tx: %d, Ty: %d", tx, ty);
     markString(string, 200, 200, -320, 0);
