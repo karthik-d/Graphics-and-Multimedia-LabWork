@@ -213,6 +213,12 @@ void plotTranslatedTriangle(int *xs, int *ys, int tx, int ty)    {
         glVertex2d((int)translated_triangle[0][i], (int)translated_triangle[1][i]);
     }
     glEnd();
+
+    char *string = (char*)malloc(sizeof(char)*100);
+    for(int i=0; i<3; i++)  {
+        sprintf(string, "(%d, %d)", (int)translated_triangle[0][i], (int)translated_triangle[1][i]);
+        markString(string, (int)translated_triangle[0][i], (int)translated_triangle[1][i], 0, -10);
+    }
 }
 
 
@@ -401,21 +407,27 @@ void display_transforms()   {
     glColor3f(1.0, 0.0, 0.0);
 
     /* TRANSLATION */
-    // plotTranslatedTriangle(xs, ys, -100, -50);
+    int tx = -100;
+    int ty = -50;
+    plotTranslatedTriangle(xs, ys, -100, -50);
+    // // label translation
+    char *string = (char*)malloc(sizeof(char)*100);
+    sprintf(string, "Tx: %d, Ty: %d", tx, ty);
+    markString(string, 200, 200, -320, 0);
 
     /* ROTATIONS */
-    int x0 = -100;
-    int y0 = -100;
-    int theta1 = -30;
-    int theta2 = 45;
-    plotRotatedTriangle(xs, ys, 0, 0, theta1);
-    plotRotatedTriangle(xs, ys, x0, y0, theta2);
+    // int x0 = -100;
+    // int y0 = -100;
+    // int theta1 = -30;
+    // int theta2 = 45;
+    // plotRotatedTriangle(xs, ys, 0, 0, theta1);
+    // plotRotatedTriangle(xs, ys, x0, y0, theta2);
     // // label rotations
-    char *string = (char*)malloc(sizeof(char)*100);
-    sprintf(string, "Theta: %d, Pivot: (%d, %d)", theta1, 0, 0);
-    markString(string, 120, 10, 0, 0);
-    sprintf(string, "Theta: %d, Pivot: (%d, %d)", theta2, x0, y0);
-    markString(string, 120, 10, -320, 0);
+    // char *string = (char*)malloc(sizeof(char)*100);
+    // sprintf(string, "Theta: %d, Pivot: (%d, %d)", theta1, 0, 0);
+    // markString(string, 120, 10, 0, 0);
+    // sprintf(string, "Theta: %d, Pivot: (%d, %d)", theta2, x0, y0);
+    // markString(string, 120, 10, -320, 0);
 
     /* SCALING */
     // int x0 = -100;
@@ -471,9 +483,9 @@ int main(int argc, char **argv)  {
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     glutInitWindowSize(640, 480);
 
-    // glutCreateWindow("Ex5A - 2D Translation");
+    glutCreateWindow("Ex5A - 2D Translation");
     // glutCreateWindow("Ex5B - 2D Rotation");
-    glutCreateWindow("Ex5C - 2D Scaling");
+    // glutCreateWindow("Ex5C - 2D Scaling");
     // glutCreateWindow("Ex5D - 2D Reflection");
     // glutCreateWindow("Ex5E - 2D Shearing");
     glutDisplayFunc(display_transforms);
