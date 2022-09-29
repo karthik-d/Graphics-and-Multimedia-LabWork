@@ -275,8 +275,10 @@ void plotScaledTriangle(int *xs, int *ys, int xf, int yf, float sx, float sy, in
     char *string = (char*)malloc(sizeof(char)*100);
     for(int i=0; i<3; i++)  {
         sprintf(string, "(%d, %d)", (int)actual_result[0][i], (int)actual_result[1][i]);
-        markString(string, (int)scaled_triangle[0][i], (int)scaled_triangle[1][i], 0, 0);
+        markString(string, (int)scaled_triangle[0][i], (int)scaled_triangle[1][i], 0, -10);
     }
+    sprintf(string, "Xscale: %.2f, Yscale: %.2f, Ref: (%d, %d)", sx, sy, xf, yf);
+    markString(string, 100, 180, x_offset, y_offset);
 }
 
 
@@ -376,33 +378,45 @@ void display_transforms()   {
     // int xs[3], ys[3];
     int xs[] = {10, 80, 40};
     int ys[] = {70, 100, 180};
+
+    /* GET USER INPUTS */
     // printf("\nVertex 1: ");
     // scanf("%d %d", &xs[0], &ys[0]);
     // printf("\nVertex 2: ");
     // scanf("%d %d", &xs[1], &ys[1]);
     // printf("\nVertex 3: ");
     // scanf("%d %d", &xs[2], &ys[2]);
+
+    /* PLOT MAIN FIGURE -- A TRIANGLE */
     glColor3f(0.0, 0.0, 1.0);
     plotTriangle(xs, ys);
+
+    /* PLOT TRANSFORMATIONS */
     glColor3f(1.0, 0.0, 0.0);
+
+    /* TRANSLATION */
     // plotTranslatedTriangle(xs, ys, -100, -50);
+
+    /* ROTATIONS */
     // int x0 = -100;
     // int y0 = -100;
     // int theta = -30;
     // plotRotatedTriangle(xs, ys, 0, 0, theta);
     // plotRotatedTriangle(xs, ys, x0, y0, 45);
-    // int x0 = -100;
-    // int y0 = -100;
-    // float sx1 = 0.75;
-    // float sy1 = 0.75;
-    // float sx2 = 1.8;
-    // float sy2 = 1.2;
-    // plotScaledTriangle(xs, ys, 0, 0, sx1, sy1, -100, 0);
-    // plotScaledTriangle(xs, ys, 0, 0, sx2, sy2, 0, -250);
-    // plotScaledTriangle(xs, ys, -40, -60, sx1, sy2, -100, -250);
+
+    /* SCALING */
+    int x0 = -100;
+    int y0 = -100;
+    float sx1 = 0.75;
+    float sy1 = 0.75;
+    float sx2 = 1.8;
+    float sy2 = 1.2;
+    plotScaledTriangle(xs, ys, 0, 0, sx1, sy1, 0, -240);
+    plotScaledTriangle(xs, ys, 0, 0, sx2, sy2, -320, 0);
+    plotScaledTriangle(xs, ys, -40, -60, sx1, sy2, -320, -240);
 
     /* REFLECTION */
-    plotReflectedTriangle(xs, ys);
+    // plotReflectedTriangle(xs, ys);
 
     /* SHEARING */
     // int yref = -1;
@@ -419,9 +433,10 @@ void display_transforms()   {
     // markString(string, 50, 50, -320, 0);
 
     /* MODIFIED ORIGIN LABELS */
-    // markString("(0, 0)", 5, 5, 0, 0);
-    // markString("(0, 0)", 5, 5, 0, -240);
-    // markString("(0, 0)", 5, 5, -320, 0);
+    markString("(0, 0)", 5, 5, 0, 0);
+    markString("(0, 0)", 5, 5, 0, -240);
+    markString("(0, 0)", 5, 5, -320, 0);
+    markString("(0, 0)", 5, 5, -320, -240);
 
     glFlush();
 }
@@ -445,8 +460,8 @@ int main(int argc, char **argv)  {
 
     // glutCreateWindow("Ex5A - 2D Translation");
     // glutCreateWindow("Ex5B - 2D Rotation");
-    // glutCreateWindow("Ex5C - 2D Scaling");
-    glutCreateWindow("Ex5D - 2D Reflection");
+    glutCreateWindow("Ex5C - 2D Scaling");
+    // glutCreateWindow("Ex5D - 2D Reflection");
     // glutCreateWindow("Ex5E - 2D Shearing");
     glutDisplayFunc(display_transforms);
 
