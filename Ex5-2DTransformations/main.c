@@ -131,6 +131,25 @@ float** makeRotationMatrix(int theta) {
 }
 
 
+float** makeScalingMatrix(int sx, int sy)   {
+    float **res = (float**)malloc(sizeof(float*)*3);
+    for(int i=0; i<3; i++) {
+        *(res+i) = (float*)malloc(sizeof(float*)*3);
+        for(int j=0; j<3; j++) {
+            if(i==j){
+                res[i][j] = 1;
+            }
+            else{
+                res[i][j] = 0;
+            }
+        }
+    }
+    res[0][0] = sx;
+    res[1][1] = sy;
+    return res;
+}
+
+
 float** makeReflectionMatrix(short along_x, short along_y, short along_xeqy) {
     // truth of the first two arguments overrides the last
 
@@ -182,8 +201,6 @@ void plotRotatedTriangle(int *xs, int *ys, int xr, int yr, int theta)    {
     
     float **triangle_matrix = makeTriangleMatrix(xs, ys);
     displayMatrix(triangle_matrix, 3, 3);
-
-    float **rotation_matrix = makeRotationMatrix(theta);
     
     float **rotated_triangle = multiplyMatrices(
         makeTranslationMatrix(xr, yr),
@@ -191,6 +208,33 @@ void plotRotatedTriangle(int *xs, int *ys, int xr, int yr, int theta)    {
             makeRotationMatrix(theta),
             multiplyMatrices(
                 makeTranslationMatrix(-xr, -yr),
+                triangle_matrix,
+                3, 3, 3
+            ),
+            3, 3, 3
+        ),
+        3, 3, 3);
+    
+    for(int i=0; i<3; i++)  {
+        glVertex2d((int)rotated_triangle[0][i], (int)rotated_triangle[1][i]);
+    }
+    glEnd();
+}
+
+
+void plotScaledTriangle(int *xs, int *ys, int xf, int yf, int sx, int sy)    {
+    // (xf, yf) --> Fixed Point
+    glBegin(GL_TRIANGLES);
+    
+    float **triangle_matrix = makeTriangleMatrix(xs, ys);
+    displayMatrix(triangle_matrix, 3, 3);
+    
+    float **rotated_triangle = multiplyMatrices(
+        makeTranslationMatrix(xf, yf),
+        multiplyMatrices(
+            makeScalingMatrix(sx, sy),
+            multiplyMatrices(
+                makeTranslationMatrix(-xf, -yf),
                 triangle_matrix,
                 3, 3, 3
             ),
@@ -254,11 +298,12 @@ void display_transforms()   {
     plotTriangle(xs, ys);
     glColor3f(1.0, 0.0, 0.0);
     // plotTranslatedTriangle(xs, ys, -100, -50);
-    int x0 = -100;
-    int y0 = -100;
-    int theta = -30;
-    plotRotatedTriangle(xs, ys, 0, 0, theta);
-    plotRotatedTriangle(xs, ys, x0, y0, 45);
+    // int x0 = -100;
+    // int y0 = -100;
+    // int theta = -30;
+    // plotRotatedTriangle(xs, ys, 0, 0, theta);
+    // plotRotatedTriangle(xs, ys, x0, y0, 45);
+    plotScaledTriangle(xs, ys, -10, -20, 1, 2);
     // plotReflectedTriangle(xs, ys);
 
     glFlush();
@@ -282,7 +327,8 @@ int main(int argc, char **argv)  {
     glutInitWindowSize(640, 480);
 
     // glutCreateWindow("Ex5A - 2D Translation");
-    glutCreateWindow("Ex5B - 2D Rotation");
+    // glutCreateWindow("Ex5B - 2D Rotation");
+    glutCreateWindow("Ex5C - 2D Scaling");
     // glutCreateWindow("Ex5D - 2D Reflection");
     glutDisplayFunc(display_transforms);
 
