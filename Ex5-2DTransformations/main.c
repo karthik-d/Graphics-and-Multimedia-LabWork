@@ -254,11 +254,11 @@ void display_transforms()   {
     plotTriangle(xs, ys);
     glColor3f(1.0, 0.0, 0.0);
     // plotTranslatedTriangle(xs, ys, -100, -50);
-    int x0 = -50;
-    int y0 = -40;
+    int x0 = -100;
+    int y0 = -100;
     int theta = -30;
-    // plotRotatedMatrix(xs, ys, 0, 0, theta);
-    plotRotatedTriangle(xs, ys, x0, y0, theta);
+    plotRotatedTriangle(xs, ys, 0, 0, theta);
+    plotRotatedTriangle(xs, ys, x0, y0, 45);
     // plotReflectedTriangle(xs, ys);
 
     glFlush();
@@ -282,7 +282,7 @@ int main(int argc, char **argv)  {
     glutInitWindowSize(640, 480);
 
     // glutCreateWindow("Ex5A - 2D Translation");
-    glutCreateWindow("Ex5A - 2D Rotation");
+    glutCreateWindow("Ex5B - 2D Rotation");
     // glutCreateWindow("Ex5D - 2D Reflection");
     glutDisplayFunc(display_transforms);
 
