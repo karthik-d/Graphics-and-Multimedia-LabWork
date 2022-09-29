@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 void renderSpacedBitmapString(float x, float y, void *font, char *string) {
     char *c;
     int x1 = x;
@@ -17,16 +18,6 @@ void markString(char *string, int x, int y, int x_offset, int y_offset) {
     glColor3f(255.0, 0, 0.0); // red color
     renderSpacedBitmapString(x+x_offset, y+y_offset, GLUT_BITMAP_HELVETICA_12, string);
     glFlush();
-}
-
-
-void plotDivisionLines()    {
-    glBegin(GL_LINES);
-    glVertex2d(-320, 0);
-    glVertex2d(320, 0);
-    glVertex2d(0, -240);
-    glVertex2d(0, 240);
-    glEnd();
 }
 
 
@@ -47,6 +38,7 @@ int** multiplyMatrices(int **m1, int **m2, int r1, int c1, int c2)    {
 
 
 void displayMatrix(int **matrix, int r, int c)  {
+    printf("\n");
     for(int i=0;i<r;i++)    {
         for(int j=0; j<c; j++)  {
             printf("%d ", matrix[i][j]);
@@ -54,6 +46,17 @@ void displayMatrix(int **matrix, int r, int c)  {
         printf("\n");
     }
 }
+
+
+void plotDivisionLines()    {
+    glBegin(GL_LINES);
+    glVertex2d(-320, 0);
+    glVertex2d(320, 0);
+    glVertex2d(0, -240);
+    glVertex2d(0, 240);
+    glEnd();
+}
+
 
 void plotPoint(int x, int y, int x_offset, int y_offset)    {
     glBegin(GL_POINTS);
@@ -104,7 +107,9 @@ int** makeTranslationMatrix(int tx, int ty) {
 }
 
 
-int** makeReflectionMatrix(short along_x) {
+int** makeReflectionMatrix(short along_x, short along_y, short along_xeqy) {
+    // truth of the first two arguments overrides the last
+
     int **res = (int**)malloc(sizeof(int*)*3);
     for(int i=0; i<3; i++) {
         *(res+i) = (int*)malloc(sizeof(int)*3);
@@ -117,11 +122,19 @@ int** makeReflectionMatrix(short along_x) {
             }
         }
     }
+    short override_xeqy = 0;
     if(along_x){
         res[1][1] = -1;
+        override_xeqy = 1;
     }
-    else{
+    if(along_y){
         res[0][0] = -1;
+        override_xeqy = 1;
+    }
+    if(!override_xeqy && along_xeqy)    {
+        int *temp = res[0];
+        res[0] = res[1];
+        res[1] = temp;
     }
     return res;
 }
@@ -130,11 +143,8 @@ int** makeReflectionMatrix(short along_x) {
 void plotTranslatedTriangle(int *xs, int *ys, int tx, int ty)    {
     glBegin(GL_TRIANGLES);
     int **tr_matrix = makeTranslationMatrix(tx, ty);
-    displayMatrix(tr_matrix, 3, 3);
     int **triangle_matrix = makeTriangleMatrix(xs, ys);
-    displayMatrix(triangle_matrix, 3, 3);
     int **translated_triangle = multiplyMatrices(tr_matrix, triangle_matrix, 3, 3, 3);
-    displayMatrix(translated_triangle, 3, 3);
     for(int i=0; i<3; i++)  {
         glVertex2d(translated_triangle[0][i], translated_triangle[1][i]);
     }
@@ -144,17 +154,33 @@ void plotTranslatedTriangle(int *xs, int *ys, int tx, int ty)    {
 
 void plotReflectedTriangle(int *xs, int *ys)    {
     glBegin(GL_TRIANGLES);
-    int **xref_matrix = makeReflectionMatrix(1);
-    int **yref_matrix = makeReflectionMatrix(0);
+    
+    int **xref_matrix = makeReflectionMatrix(1, 0, 0);
+    int **yref_matrix = makeReflectionMatrix(0, 1, 0);
+    int **xyref_matrix = makeReflectionMatrix(1, 1, 0);
+    int **xeqyref_matrix = makeReflectionMatrix(0, 0, 1);
     displayMatrix(xref_matrix, 3, 3);
+    
     int **triangle_matrix = makeTriangleMatrix(xs, ys);
     displayMatrix(triangle_matrix, 3, 3);
+    
     int **xref_triangle = multiplyMatrices(xref_matrix, triangle_matrix, 3, 3, 3);
     displayMatrix(xref_triangle, 3, 3);
     int **yref_triangle = multiplyMatrices(yref_matrix, triangle_matrix, 3, 3, 3);
+    int **xyref_triangle = multiplyMatrices(xyref_matrix, triangle_matrix, 3, 3, 3);
+    int **xeqyref_triangle = multiplyMatrices(xeqyref_matrix, triangle_matrix, 3, 3, 3);
+    
     for(int i=0; i<3; i++)  {
         glVertex2d(xref_triangle[0][i], xref_triangle[1][i]);
+    }
+    for(int i=0; i<3; i++)  {
         glVertex2d(yref_triangle[0][i], yref_triangle[1][i]);
+    }
+    for(int i=0; i<3; i++)  {
+        glVertex2d(xyref_triangle[0][i], xyref_triangle[1][i]);
+    }
+    for(int i=0; i<3; i++)  {
+        glVertex2d(xeqyref_triangle[0][i], xeqyref_triangle[1][i]);
     }
     glEnd();
 }
@@ -165,15 +191,19 @@ void display_transforms()   {
     glClear(GL_COLOR_BUFFER_BIT);
     plotDivisionLines();
     
-    int xs[3], ys[3];
-    printf("\nVertex 1: ");
-    scanf("%d %d", &xs[0], &ys[0]);
-    printf("\nVertex 2: ");
-    scanf("%d %d", &xs[1], &ys[1]);
-    printf("\nVertex 3: ");
-    scanf("%d %d", &xs[2], &ys[2]);
+    // int xs[3], ys[3];
+    int xs[] = {10, 80, 40};
+    int ys[] = {20, 100, 180};
+    // printf("\nVertex 1: ");
+    // scanf("%d %d", &xs[0], &ys[0]);
+    // printf("\nVertex 2: ");
+    // scanf("%d %d", &xs[1], &ys[1]);
+    // printf("\nVertex 3: ");
+    // scanf("%d %d", &xs[2], &ys[2]);
+    glColor3f(0.0, 0.0, 1.0);
     plotTriangle(xs, ys);
-    plotTranslatedTriangle(xs, ys, -100, -50);
+    // plotTranslatedTriangle(xs, ys, -100, -50);
+    glColor3f(1.0, 0.0, 0.0);
     plotReflectedTriangle(xs, ys);
 
     glFlush();
