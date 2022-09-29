@@ -307,7 +307,7 @@ void display_transforms()   {
     
     // int xs[3], ys[3];
     int xs[] = {10, 80, 40};
-    int ys[] = {20, 100, 180};
+    int ys[] = {70, 100, 180};
     // printf("\nVertex 1: ");
     // scanf("%d %d", &xs[0], &ys[0]);
     // printf("\nVertex 2: ");
@@ -330,8 +330,8 @@ void display_transforms()   {
     float sx2 = 1.8;
     float sy2 = 1.2;
     plotScaledTriangle(xs, ys, 0, 0, sx1, sy1, -100, 0);
-    plotScaledTriangle(xs, ys, 0, 0, sx2, sy2, 0, -100);
-    plotScaledTriangle(xs, ys, -40, -60, sx1, sy2, -150, 0);
+    plotScaledTriangle(xs, ys, 0, 0, sx2, sy2, 0, -250);
+    plotScaledTriangle(xs, ys, -40, -60, sx1, sy2, -100, -250);
     // plotReflectedTriangle(xs, ys);
 
     glFlush();
