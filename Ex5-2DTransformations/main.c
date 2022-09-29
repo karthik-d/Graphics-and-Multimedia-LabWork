@@ -31,7 +31,7 @@ float** multiplyMatrices(float **m1, float **m2, int r1, int c1, int c2)    {
         *(res+i) = (float*)malloc(sizeof(float)*c2);
         for(int j=0; j<c2; j++) {
             res[i][j] = 0;
-            for(int k=0;k<c1;k++)   {
+            for(int k=0; k<c1; k++)   {
                 res[i][j] += m1[i][k] * m2[k][j];
             }
         }
@@ -44,7 +44,7 @@ void displayMatrix(float **matrix, int r, int c)  {
     printf("\n");
     for(int i=0;i<r;i++)    {
         for(int j=0; j<c; j++)  {
-            printf("%d ", matrix[i][j]);
+            printf("%f ", matrix[i][j]);
         }
         printf("\n");
     }
@@ -131,7 +131,7 @@ float** makeRotationMatrix(int theta) {
 }
 
 
-float** makeScalingMatrix(int sx, int sy)   {
+float** makeScalingMatrix(float sx, float sy)   {
     float **res = (float**)malloc(sizeof(float*)*3);
     for(int i=0; i<3; i++) {
         *(res+i) = (float*)malloc(sizeof(float*)*3);
@@ -166,11 +166,11 @@ float** makeReflectionMatrix(short along_x, short along_y, short along_xeqy) {
         }
     }
     short override_xeqy = 0;
-    if(along_x){
+    if(along_x) {
         res[1][1] = -1;
         override_xeqy = 1;
     }
-    if(along_y){
+    if(along_y) {
         res[0][0] = -1;
         override_xeqy = 1;
     }
@@ -222,28 +222,48 @@ void plotRotatedTriangle(int *xs, int *ys, int xr, int yr, int theta)    {
 }
 
 
-void plotScaledTriangle(int *xs, int *ys, int xf, int yf, int sx, int sy)    {
+void plotScaledTriangle(int *xs, int *ys, int xf, int yf, float sx, float sy, int x_offset, int y_offset)    {
     // (xf, yf) --> Fixed Point
     glBegin(GL_TRIANGLES);
     
     float **triangle_matrix = makeTriangleMatrix(xs, ys);
-    displayMatrix(triangle_matrix, 3, 3);
+    // displayMatrix(triangle_matrix, 3, 3);
     
-    float **rotated_triangle = multiplyMatrices(
-        makeTranslationMatrix(xf, yf),
+    displayMatrix(
         multiplyMatrices(
-            makeScalingMatrix(sx, sy),
+            makeTranslationMatrix(xf, yf),
             multiplyMatrices(
-                makeTranslationMatrix(-xf, -yf),
-                triangle_matrix,
+                makeScalingMatrix(sx, sy),
+                multiplyMatrices(
+                    makeTranslationMatrix(-xf, -yf),
+                    triangle_matrix,
+                    3, 3, 3
+                ),
                 3, 3, 3
             ),
-            3, 3, 3
-        ),
+            3, 3, 3),
+            3, 3
+    );
+
+    float **rotated_triangle = multiplyMatrices(
+        makeTranslationMatrix(x_offset, y_offset),
+        multiplyMatrices(
+            makeTranslationMatrix(xf, yf),
+            multiplyMatrices(
+                makeScalingMatrix(sx, sy),
+                multiplyMatrices(
+                    makeTranslationMatrix(-xf, -yf),
+                    triangle_matrix,
+                    3, 3, 3
+                ),
+                3, 3, 3
+            ),
+            3, 3, 3),
         3, 3, 3);
     
     for(int i=0; i<3; i++)  {
         glVertex2d((int)rotated_triangle[0][i], (int)rotated_triangle[1][i]);
+        printf("\n%d %d", (int)rotated_triangle[0][i], (int)rotated_triangle[1][i]);
     }
     glEnd();
 }
@@ -303,7 +323,15 @@ void display_transforms()   {
     // int theta = -30;
     // plotRotatedTriangle(xs, ys, 0, 0, theta);
     // plotRotatedTriangle(xs, ys, x0, y0, 45);
-    plotScaledTriangle(xs, ys, -10, -20, 1, 2);
+    int x0 = -100;
+    int y0 = -100;
+    float sx1 = 0.75;
+    float sy1 = 0.75;
+    float sx2 = 1.8;
+    float sy2 = 1.2;
+    plotScaledTriangle(xs, ys, 0, 0, sx1, sy1, -100, 0);
+    plotScaledTriangle(xs, ys, 0, 0, sx2, sy2, 0, -100);
+    plotScaledTriangle(xs, ys, -40, -60, sx1, sy2, -150, 0);
     // plotReflectedTriangle(xs, ys);
 
     glFlush();
