@@ -183,6 +183,27 @@ float** makeReflectionMatrix(short along_x, short along_y, short along_xeqy) {
 }
 
 
+float **makeShearingMatrix(float xshear, float yshear, int yref, int xref)  {
+    float **res = (float**)malloc(sizeof(float*)*3);
+    for(int i=0; i<3; i++) {
+        *(res+i) = (float*)malloc(sizeof(float)*3);
+        for(int j=0; j<3; j++) {
+            if(i==j){
+                res[i][j] = 1;
+            }
+            else{
+                res[i][j] = 0;
+            }
+        }
+    }
+    res[0][1] = xshear;
+    res[0][2] = -(xshear*yref);
+    res[1][0] = yshear;
+    res[1][2] = -(yshear*xref);    
+    return res;
+}
+
+
 void plotTranslatedTriangle(int *xs, int *ys, int tx, int ty)    {
     glBegin(GL_TRIANGLES);
     float **tr_matrix = makeTranslationMatrix(tx, ty);
@@ -228,24 +249,8 @@ void plotScaledTriangle(int *xs, int *ys, int xf, int yf, float sx, float sy, in
     
     float **triangle_matrix = makeTriangleMatrix(xs, ys);
     // displayMatrix(triangle_matrix, 3, 3);
-    
-    displayMatrix(
-        multiplyMatrices(
-            makeTranslationMatrix(xf, yf),
-            multiplyMatrices(
-                makeScalingMatrix(sx, sy),
-                multiplyMatrices(
-                    makeTranslationMatrix(-xf, -yf),
-                    triangle_matrix,
-                    3, 3, 3
-                ),
-                3, 3, 3
-            ),
-            3, 3, 3),
-            3, 3
-    );
 
-    float **rotated_triangle = multiplyMatrices(
+    float **scaled_triangle = multiplyMatrices(
         makeTranslationMatrix(x_offset, y_offset),
         multiplyMatrices(
             makeTranslationMatrix(xf, yf),
@@ -262,8 +267,7 @@ void plotScaledTriangle(int *xs, int *ys, int xf, int yf, float sx, float sy, in
         3, 3, 3);
     
     for(int i=0; i<3; i++)  {
-        glVertex2d((int)rotated_triangle[0][i], (int)rotated_triangle[1][i]);
-        printf("\n%d %d", (int)rotated_triangle[0][i], (int)rotated_triangle[1][i]);
+        glVertex2d((int)scaled_triangle[0][i], (int)scaled_triangle[1][i]);
     }
     glEnd();
 }
@@ -300,6 +304,42 @@ void plotReflectedTriangle(int *xs, int *ys)    {
 }
 
 
+void plotShearedTriangle(int *xs, int *ys, float xshear, float yshear, int yref, int xref, int x_offset, int y_offset)  {
+    glBegin(GL_TRIANGLES);
+    
+    float **triangle_matrix = makeTriangleMatrix(xs, ys);
+    // displayMatrix(triangle_matrix, 3, 3);
+
+    // without translating for display
+    float **actual_result = multiplyMatrices(
+        makeShearingMatrix(xshear, yshear, yref, xref),
+        triangle_matrix,
+        3, 3, 3
+    );
+
+    float **sheared_triangle = multiplyMatrices(
+        makeTranslationMatrix(x_offset, y_offset),
+        multiplyMatrices(
+            makeShearingMatrix(xshear, yshear, yref, xref),
+            triangle_matrix,
+            3, 3, 3
+        ), 3, 3, 3
+    );
+    
+    for(int i=0; i<3; i++)  {
+        glVertex2d((int)sheared_triangle[0][i], (int)sheared_triangle[1][i]);
+    }
+    glEnd();
+
+    char *string = (char*)malloc(sizeof(char)*100);
+    for(int i=0; i<3; i++)  {
+        sprintf(string, "(%d, %d)", (int)actual_result[0][i], (int)actual_result[1][i]);
+        markString(string, (int)sheared_triangle[0][i], (int)sheared_triangle[1][i], 0, 0);
+    }
+    
+}
+
+
 
 void display_transforms()   {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -323,15 +363,32 @@ void display_transforms()   {
     // int theta = -30;
     // plotRotatedTriangle(xs, ys, 0, 0, theta);
     // plotRotatedTriangle(xs, ys, x0, y0, 45);
-    int x0 = -100;
-    int y0 = -100;
-    float sx1 = 0.75;
-    float sy1 = 0.75;
-    float sx2 = 1.8;
-    float sy2 = 1.2;
-    plotScaledTriangle(xs, ys, 0, 0, sx1, sy1, -100, 0);
-    plotScaledTriangle(xs, ys, 0, 0, sx2, sy2, 0, -250);
-    plotScaledTriangle(xs, ys, -40, -60, sx1, sy2, -100, -250);
+    // int x0 = -100;
+    // int y0 = -100;
+    // float sx1 = 0.75;
+    // float sy1 = 0.75;
+    // float sx2 = 1.8;
+    // float sy2 = 1.2;
+    // plotScaledTriangle(xs, ys, 0, 0, sx1, sy1, -100, 0);
+    // plotScaledTriangle(xs, ys, 0, 0, sx2, sy2, 0, -250);
+    // plotScaledTriangle(xs, ys, -40, -60, sx1, sy2, -100, -250);
+    int yref = -1;
+    int xref = -2;
+    float xshear = 0.9;
+    float yshear = 1.2;
+    plotShearedTriangle(xs, ys, xshear, 0, yref, 0, 0, -240);
+    plotShearedTriangle(xs, ys, 0, yshear, 0, xref, -320, 0);
+    // label shears
+    char *string = (char*)malloc(sizeof(char)*100);
+    sprintf(string, "Xshear: %.2f, Yref: %d", xshear, yref);
+    markString(string, 50, 50, 0, -240);
+    sprintf(string, "Yshear: %.2f, Xref: %d", yshear, xref);
+    markString(string, 50, 50, -320, 0);
+
+    markString("(0, 0)", 5, 5, 0, 0);
+    markString("(0, 0)", 5, 5, 0, -240);
+    markString("(0, 0)", 5, 5, -320, 0);
+
     // plotReflectedTriangle(xs, ys);
 
     glFlush();
