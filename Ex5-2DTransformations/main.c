@@ -248,28 +248,35 @@ void plotScaledTriangle(int *xs, int *ys, int xf, int yf, float sx, float sy, in
     glBegin(GL_TRIANGLES);
     
     float **triangle_matrix = makeTriangleMatrix(xs, ys);
-    // displayMatrix(triangle_matrix, 3, 3);
+
+    float **actual_result = multiplyMatrices(
+    makeTranslationMatrix(xf, yf),
+    multiplyMatrices(
+        makeScalingMatrix(sx, sy),
+        multiplyMatrices(
+            makeTranslationMatrix(-xf, -yf),
+            triangle_matrix,
+            3, 3, 3
+        ),
+        3, 3, 3
+    ),
+    3, 3, 3);
 
     float **scaled_triangle = multiplyMatrices(
         makeTranslationMatrix(x_offset, y_offset),
-        multiplyMatrices(
-            makeTranslationMatrix(xf, yf),
-            multiplyMatrices(
-                makeScalingMatrix(sx, sy),
-                multiplyMatrices(
-                    makeTranslationMatrix(-xf, -yf),
-                    triangle_matrix,
-                    3, 3, 3
-                ),
-                3, 3, 3
-            ),
-            3, 3, 3),
+        actual_result,
         3, 3, 3);
     
     for(int i=0; i<3; i++)  {
         glVertex2d((int)scaled_triangle[0][i], (int)scaled_triangle[1][i]);
     }
     glEnd();
+
+    char *string = (char*)malloc(sizeof(char)*100);
+    for(int i=0; i<3; i++)  {
+        sprintf(string, "(%d, %d)", (int)actual_result[0][i], (int)actual_result[1][i]);
+        markString(string, (int)scaled_triangle[0][i], (int)scaled_triangle[1][i], 0, 0);
+    }
 }
 
 
@@ -301,6 +308,27 @@ void plotReflectedTriangle(int *xs, int *ys)    {
         glVertex2d((int)xeqyref_triangle[0][i], (int)xeqyref_triangle[1][i]);
     }
     glEnd();
+
+    char *string = (char*)malloc(sizeof(char)*100);
+    for(int i=0; i<3; i++)  {
+        // plot line 
+        glBegin(GL_LINES);
+        glVertex2d(0, 0);
+        glVertex2d(200, 200);
+        glEnd();
+
+        sprintf(string, "(%d, %d)", (int)xref_triangle[0][i], (int)xref_triangle[1][i]);
+        markString(string, (int)xref_triangle[0][i], (int)xref_triangle[1][i], 0, 0);
+
+        sprintf(string, "(%d, %d)", (int)yref_triangle[0][i], (int)yref_triangle[1][i]);
+        markString(string, (int)yref_triangle[0][i], (int)yref_triangle[1][i], -40, -10);
+
+        sprintf(string, "(%d, %d)", (int)xyref_triangle[0][i], (int)xyref_triangle[1][i]);
+        markString(string, (int)xyref_triangle[0][i], (int)xyref_triangle[1][i], -60, -5);
+
+        sprintf(string, "(%d, %d)", (int)xeqyref_triangle[0][i], (int)xeqyref_triangle[1][i]);
+        markString(string, (int)xeqyref_triangle[0][i], (int)xeqyref_triangle[1][i], 0, -10);
+    }
 }
 
 
@@ -372,24 +400,28 @@ void display_transforms()   {
     // plotScaledTriangle(xs, ys, 0, 0, sx1, sy1, -100, 0);
     // plotScaledTriangle(xs, ys, 0, 0, sx2, sy2, 0, -250);
     // plotScaledTriangle(xs, ys, -40, -60, sx1, sy2, -100, -250);
-    int yref = -1;
-    int xref = -2;
-    float xshear = 0.9;
-    float yshear = 1.2;
-    plotShearedTriangle(xs, ys, xshear, 0, yref, 0, 0, -240);
-    plotShearedTriangle(xs, ys, 0, yshear, 0, xref, -320, 0);
-    // label shears
-    char *string = (char*)malloc(sizeof(char)*100);
-    sprintf(string, "Xshear: %.2f, Yref: %d", xshear, yref);
-    markString(string, 50, 50, 0, -240);
-    sprintf(string, "Yshear: %.2f, Xref: %d", yshear, xref);
-    markString(string, 50, 50, -320, 0);
 
-    markString("(0, 0)", 5, 5, 0, 0);
-    markString("(0, 0)", 5, 5, 0, -240);
-    markString("(0, 0)", 5, 5, -320, 0);
+    /* REFLECTION */
+    plotReflectedTriangle(xs, ys);
 
-    // plotReflectedTriangle(xs, ys);
+    /* SHEARING */
+    // int yref = -1;
+    // int xref = -2;
+    // float xshear = 0.9;
+    // float yshear = 1.2;
+    // plotShearedTriangle(xs, ys, xshear, 0, yref, 0, 0, -240);
+    // plotShearedTriangle(xs, ys, 0, yshear, 0, xref, -320, 0);
+    // // label shears
+    // char *string = (char*)malloc(sizeof(char)*100);
+    // sprintf(string, "Xshear: %.2f, Yref: %d", xshear, yref);
+    // markString(string, 50, 50, 0, -240);
+    // sprintf(string, "Yshear: %.2f, Xref: %d", yshear, xref);
+    // markString(string, 50, 50, -320, 0);
+
+    /* MODIFIED ORIGIN LABELS */
+    // markString("(0, 0)", 5, 5, 0, 0);
+    // markString("(0, 0)", 5, 5, 0, -240);
+    // markString("(0, 0)", 5, 5, -320, 0);
 
     glFlush();
 }
@@ -413,8 +445,9 @@ int main(int argc, char **argv)  {
 
     // glutCreateWindow("Ex5A - 2D Translation");
     // glutCreateWindow("Ex5B - 2D Rotation");
-    glutCreateWindow("Ex5C - 2D Scaling");
-    // glutCreateWindow("Ex5D - 2D Reflection");
+    // glutCreateWindow("Ex5C - 2D Scaling");
+    glutCreateWindow("Ex5D - 2D Reflection");
+    // glutCreateWindow("Ex5E - 2D Shearing");
     glutDisplayFunc(display_transforms);
 
     init();
