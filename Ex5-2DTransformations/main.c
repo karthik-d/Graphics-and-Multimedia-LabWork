@@ -240,6 +240,12 @@ void plotRotatedTriangle(int *xs, int *ys, int xr, int yr, int theta)    {
         glVertex2d((int)rotated_triangle[0][i], (int)rotated_triangle[1][i]);
     }
     glEnd();
+
+    char *string = (char*)malloc(sizeof(char)*100);
+    for(int i=0; i<3; i++)  {
+        sprintf(string, "(%d, %d)", (int)rotated_triangle[0][i], (int)rotated_triangle[1][i]);
+        markString(string, (int)rotated_triangle[0][i], (int)rotated_triangle[1][i], 0, -10);
+    }
 }
 
 
@@ -398,22 +404,29 @@ void display_transforms()   {
     // plotTranslatedTriangle(xs, ys, -100, -50);
 
     /* ROTATIONS */
-    // int x0 = -100;
-    // int y0 = -100;
-    // int theta = -30;
-    // plotRotatedTriangle(xs, ys, 0, 0, theta);
-    // plotRotatedTriangle(xs, ys, x0, y0, 45);
-
-    /* SCALING */
     int x0 = -100;
     int y0 = -100;
-    float sx1 = 0.75;
-    float sy1 = 0.75;
-    float sx2 = 1.8;
-    float sy2 = 1.2;
-    plotScaledTriangle(xs, ys, 0, 0, sx1, sy1, 0, -240);
-    plotScaledTriangle(xs, ys, 0, 0, sx2, sy2, -320, 0);
-    plotScaledTriangle(xs, ys, -40, -60, sx1, sy2, -320, -240);
+    int theta1 = -30;
+    int theta2 = 45;
+    plotRotatedTriangle(xs, ys, 0, 0, theta1);
+    plotRotatedTriangle(xs, ys, x0, y0, theta2);
+    // // label rotations
+    char *string = (char*)malloc(sizeof(char)*100);
+    sprintf(string, "Theta: %d, Pivot: (%d, %d)", theta1, 0, 0);
+    markString(string, 120, 10, 0, 0);
+    sprintf(string, "Theta: %d, Pivot: (%d, %d)", theta2, x0, y0);
+    markString(string, 120, 10, -320, 0);
+
+    /* SCALING */
+    // int x0 = -100;
+    // int y0 = -100;
+    // float sx1 = 0.75;
+    // float sy1 = 0.75;
+    // float sx2 = 1.8;
+    // float sy2 = 1.2;
+    // plotScaledTriangle(xs, ys, 0, 0, sx1, sy1, 0, -240);
+    // plotScaledTriangle(xs, ys, 0, 0, sx2, sy2, -320, 0);
+    // plotScaledTriangle(xs, ys, -40, -60, sx1, sy2, -320, -240);
 
     /* REFLECTION */
     // plotReflectedTriangle(xs, ys);
@@ -433,10 +446,10 @@ void display_transforms()   {
     // markString(string, 50, 50, -320, 0);
 
     /* MODIFIED ORIGIN LABELS */
-    markString("(0, 0)", 5, 5, 0, 0);
-    markString("(0, 0)", 5, 5, 0, -240);
-    markString("(0, 0)", 5, 5, -320, 0);
-    markString("(0, 0)", 5, 5, -320, -240);
+    // markString("(0, 0)", 5, 5, 0, 0);
+    // markString("(0, 0)", 5, 5, 0, -240);
+    // markString("(0, 0)", 5, 5, -320, 0);
+    // markString("(0, 0)", 5, 5, -320, -240);
 
     glFlush();
 }
