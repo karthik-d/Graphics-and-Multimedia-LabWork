@@ -30,6 +30,14 @@ Programs, reports, documentation and screenshots implemented and designed for th
     - [Outputs](./Ex4-MidpointCircleDrawing/Outputs)
     - [Report](./Ex4-MidpointCircleDrawing/Report.pdf) 
     <br><br>
+    
+5. [2D Transformations in C++ using OpenGL](./Ex5-2DTransformations)
+    - Perform 2D transformations, namely *translation*, *rotation*, *scaling*, *shearing*, and *reflection*.
+    - Demonstrate all use-cases for the said transformations.
+    - Use matrix operations and homogeneous coordinates to perform the transformations.
+    - [Outputs](./Ex5-2DTransformations/Outputs)
+    - [Report](./Ex5-2DTransformations/Report.pdf) 
+    <br><br>
 
 
 ## Installation and Runtime
