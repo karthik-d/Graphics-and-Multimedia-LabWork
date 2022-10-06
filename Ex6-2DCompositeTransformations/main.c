@@ -51,6 +51,14 @@ void displayMatrix(float **matrix, int r, int c)  {
 }
 
 
+void plotSingleDivisionLine()    {
+    glBegin(GL_LINES);
+    glVertex2d(0, -240);
+    glVertex2d(0, 240);
+    glEnd();
+}
+
+
 void plotDivisionLines()    {
     glBegin(GL_LINES);
     glVertex2d(-320, 0);
@@ -75,6 +83,110 @@ void plotTriangle(int *xs, int *ys)   {
     }
     glEnd();
 }
+
+
+/* WINDOWING */
+
+struct window_constraints   {
+    int x_min;
+    int x_max;
+    int y_min;
+    int y_max;
+};
+typedef struct window_constraints WindowConstraints;
+
+
+void plotWindow(WindowConstraints window)   {
+    glColor3f(0.0, 0.0, 0.0);
+    glBegin(GL_LINE_LOOP);
+    glVertex2d(window.x_min, window.y_min);
+    glVertex2d(window.x_min, window.y_max);
+    glVertex2d(window.x_max, window.y_max);
+    glVertex2d(window.x_max, window.y_min);
+    glEnd();
+    
+    char *string = (char*)malloc(sizeof(char)*100);
+    sprintf(string, "(%d, %d)", window.x_min, window.y_min);
+    markString(string, window.x_min, window.y_min, 0, 0);
+
+    sprintf(string, "(%d, %d)", window.x_min, window.y_max);
+    markString(string, window.x_min, window.y_max, 0, 0);
+
+    sprintf(string, "(%d, %d)", window.x_max, window.y_max);
+    markString(string, window.x_max, window.y_max, 0, 0);
+
+    sprintf(string, "(%d, %d)", window.x_max, window.y_min);
+    markString(string, window.x_max, window.y_min, 0, 0);
+}
+
+
+void getViewportCoordinates(int *xs, int *ys, WindowConstraints world, WindowConstraints viewport, int *res_xs, int *res_ys)    {
+    
+    float sx = (float)(viewport.x_max-viewport.x_min)/(world.x_max-world.x_min);
+    float sy = (float)(viewport.y_max-viewport.y_min)/(world.y_max-world.y_min);
+    
+    for(int i=0; i<3; i++)  {
+        res_xs[i] = viewport.x_min + (xs[i] - world.x_min)*sx;
+        res_ys[i] = viewport.y_min + (ys[i] - world.y_min)*sy;
+    }
+}
+
+
+WindowConstraints offsetWindowConstraints(WindowConstraints window, int x_offset, int y_offset)    {
+    // convenience function to offset window constraints to a different location
+    // on the display window, for cleaner display
+    window.x_min += x_offset;
+    window.x_max += x_offset;
+    window.y_min += y_offset;
+    window.y_max += y_offset;
+    return window;
+}
+
+
+void display_viewport_transform(){
+    glClear(GL_COLOR_BUFFER_BIT);
+    plotSingleDivisionLine();
+    
+    /* WORLD and VIEWPORT COORDINATES */
+    WindowConstraints world_window = { 80, 220, 50, 220};
+    plotWindow(world_window);
+    WindowConstraints viewport_window = {50, 250, 80, 140};
+    viewport_window = offsetWindowConstraints(viewport_window, -320, 0);
+    plotWindow(viewport_window);
+    
+    markString("World Window", 150, 0, 0, 0);
+    markString("Viewport Window", -210, 0, 0, 0);
+    
+    int xs[] = {110, 180, 140};
+    int ys[] = {70, 100, 180};
+    
+    int *viewport_xs = (int*)malloc(sizeof(int)*3);
+    int *viewport_ys = (int*)malloc(sizeof(int)*3);
+    getViewportCoordinates(xs, ys, world_window, viewport_window, viewport_xs, viewport_ys);
+    
+    /* GET USER INPUTS */
+    // printf("\nVertex 1: ");
+    // scanf("%d %d", &xs[0], &ys[0]);
+    // printf("\nVertex 2: ");
+    // scanf("%d %d", &xs[1], &ys[1]);
+    // printf("\nVertex 3: ");
+    // scanf("%d %d", &xs[2], &ys[2]);
+    
+    /* PLOT MAIN FIGURE -- A TRIANGLE */
+    glColor3f(0.0, 0.0, 1.0);
+    plotTriangle(xs, ys);
+
+    /* PLOT TRANSFORMATIONS */
+    glColor3f(1.0, 0.0, 0.0);
+    for(int i=0; i<3; i++)  {
+        printf("(%d, %d)\n", viewport_xs[i], viewport_ys[i]);
+    }
+    plotTriangle(viewport_xs, viewport_ys);
+    
+    glFlush();
+}
+
+/* ---------------------------------------------------------- */
 
 
 float** makeTriangleMatrix(int *xs, int *ys)  {
@@ -199,7 +311,7 @@ float **makeShearingMatrix(float xshear, float yshear, int yref, int xref)  {
     res[0][1] = xshear;
     res[0][2] = -(xshear*yref);
     res[1][0] = yshear;
-    res[1][2] = -(yshear*xref);    
+    res[1][2] = -(yshear*xref);
     return res;
 }
 
@@ -324,7 +436,7 @@ void plotReflectedTriangle(int *xs, int *ys)    {
 
     char *string = (char*)malloc(sizeof(char)*100);
     for(int i=0; i<3; i++)  {
-        // plot line 
+        // plot line
         glBegin(GL_LINES);
         glVertex2d(0, 0);
         glVertex2d(200, 200);
@@ -381,13 +493,15 @@ void plotShearedTriangle(int *xs, int *ys, float xshear, float yshear, int yref,
 
 
 
+
+
 void display_transforms()   {
     glClear(GL_COLOR_BUFFER_BIT);
     plotDivisionLines();
     
     // int xs[3], ys[3];
     int xs[] = {10, 80, 40};
-    int ys[] = {70, 100, 180};
+    int ys[] = {20, 50, 130};
 
     /* GET USER INPUTS */
     // printf("\nVertex 1: ");
@@ -404,39 +518,84 @@ void display_transforms()   {
     /* PLOT TRANSFORMATIONS */
     glColor3f(1.0, 0.0, 0.0);
 
-    /* TRANSLATION */
-    int tx = -100;
-    int ty = -50;
-    plotTranslatedTriangle(xs, ys, -100, -50);
-    // label translation
+    /* TRANSLATION + ROTATION */
+//    markString("TRANSLATION and ROTATION", 200, 220, -320, 0);
+//    int tx = -100;
+//    int ty = -50;
+//    int theta = 30;
+//    // plot triangles
+//    glBegin(GL_TRIANGLES);
+//    float **tr_matrix = makeTranslationMatrix(tx, ty);
+//    float **rot_matrix = makeRotationMatrix(theta);
+//    float **triangle_matrix = makeTriangleMatrix(xs, ys);
+//    float **transformed_triangle = multiplyMatrices(
+//                                                    tr_matrix,
+//                                                    multiplyMatrices(
+//                                                                     rot_matrix,
+//                                                                     triangle_matrix, 3, 3, 3),
+//                                                    3, 3, 3);
+//    for(int i=0; i<3; i++)  {
+//        glVertex2d((int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
+//    }
+//    glEnd();
+//    // label translation + rotation
+//    char *string = (char*)malloc(sizeof(char)*100);
+//    sprintf(string, "Tx: %d, Ty: %d, Theta: %d", tx, ty, theta);
+//    markString(string, 200, 200, -320, 0);
+
+    /* SCALING + REFLECTION */
+//    markString("SCALING and REFLECTION", 200, 220, -320, 0);
+//     int x0 = -100;
+//     int y0 = -100;
+//     float sx = 0.75;
+//     float sy = 1.25;
+//    // plot triangles
+//    glBegin(GL_TRIANGLES);
+//    float **scale_matrix = makeScalingMatrix(sx, sy);
+//    float **refxy_matrix = makeReflectionMatrix(1, 1, 0);
+//    float **triangle_matrix = makeTriangleMatrix(xs, ys);
+//    float **transformed_triangle = multiplyMatrices(
+//                                                    scale_matrix,
+//                                                    multiplyMatrices(
+//                                                                     refxy_matrix,
+//                                                                     triangle_matrix, 3, 3, 3),
+//                                                    3, 3, 3);
+//    for(int i=0; i<3; i++)  {
+//        glVertex2d((int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
+//    }
+//    glEnd();
+//    // label translation + rotation
+//    char *string = (char*)malloc(sizeof(char)*100);
+//    sprintf(string, "X0: %d, Y0: %d, Sx: %.2f Sy: %.2f", x0, y0, sx, sy);
+//    markString(string, 200, 200, -320, 0);
+    
+    
+    /* SHEARING and TRANSLATION*/
+    markString("SHEARING and TRANSLATION", 200, 220, -320, 0);
+    int yref = -1;
+    int xref = -2;
+    float xshear = 0.9;
+    float yshear = 1.2;
+    int tx = -200;
+    int ty = -200;
+    glBegin(GL_TRIANGLES);
+    float **shear_matrix = makeShearingMatrix(xshear, yshear, xref, yref);
+    float **tr_matrix = makeTranslationMatrix(tx, ty);
+    float **triangle_matrix = makeTriangleMatrix(xs, ys);
+    float **transformed_triangle = multiplyMatrices(
+                                                    shear_matrix,
+                                                    multiplyMatrices(
+                                                                     tr_matrix,
+                                                                     triangle_matrix, 3, 3, 3),
+                                                    3, 3, 3);
+    for(int i=0; i<3; i++)  {
+        glVertex2d((int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
+    }
+    glEnd();
+    // label translation + rotation
     char *string = (char*)malloc(sizeof(char)*100);
-    sprintf(string, "Tx: %d, Ty: %d", tx, ty);
+    sprintf(string, "Tx: %d, Ty: %d, Yref: %d, Xref: %d, Xshear: %.2f Yshear: %.2f", tx, ty, yref, xref, xshear, yshear);
     markString(string, 200, 200, -320, 0);
-
-    /* ROTATIONS */
-    // int x0 = -100;
-    // int y0 = -100;
-    // int theta1 = -30;
-    // int theta2 = 45;
-    // plotRotatedTriangle(xs, ys, 0, 0, theta1);
-    // plotRotatedTriangle(xs, ys, x0, y0, theta2);
-    // // label rotations
-    // char *string = (char*)malloc(sizeof(char)*100);
-    // sprintf(string, "Theta: %d, Pivot: (%d, %d)", theta1, 0, 0);
-    // markString(string, 120, 10, 0, 0);
-    // sprintf(string, "Theta: %d, Pivot: (%d, %d)", theta2, x0, y0);
-    // markString(string, 120, 10, -320, 0);
-
-    /* SCALING */
-    // int x0 = -100;
-    // int y0 = -100;
-    // float sx1 = 0.75;
-    // float sy1 = 0.75;
-    // float sx2 = 1.8;
-    // float sy2 = 1.2;
-    // plotScaledTriangle(xs, ys, 0, 0, sx1, sy1, 0, -240);
-    // plotScaledTriangle(xs, ys, 0, 0, sx2, sy2, -320, 0);
-    // plotScaledTriangle(xs, ys, -40, -60, sx1, sy2, -320, -240);
 
     /* REFLECTION */
     // plotReflectedTriangle(xs, ys);
@@ -481,13 +640,11 @@ int main(int argc, char **argv)  {
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     glutInitWindowSize(640, 480);
 
-    glutCreateWindow("Ex5A - 2D Translation");
-    // glutCreateWindow("Ex5B - 2D Rotation");
-    // glutCreateWindow("Ex5C - 2D Scaling");
-    // glutCreateWindow("Ex5D - 2D Reflection");
-    // glutCreateWindow("Ex5E - 2D Shearing");
+    glutCreateWindow("Ex6A - 2D Composite Transformations");
     glutDisplayFunc(display_transforms);
-
+    //glutCreateWindow("Ex6B - World to Viewport");
+    //glutDisplayFunc(display_viewport_transform);
+    
     init();
     glutMainLoop();
     return 1;
