@@ -492,9 +492,6 @@ void plotShearedTriangle(int *xs, int *ys, float xshear, float yshear, int yref,
 }
 
 
-
-
-
 void display_transforms()   {
     glClear(GL_COLOR_BUFFER_BIT);
     plotDivisionLines();
@@ -543,6 +540,14 @@ void display_transforms()   {
 //    char *string = (char*)malloc(sizeof(char)*100);
 //    sprintf(string, "Tx: %d, Ty: %d, Theta: %d", tx, ty, theta);
 //    markString(string, 200, 200, -320, 0);
+    // markString(string, 200, 200, -320, 0);
+    // for(int i=0; i<3; i++)  {
+    //     sprintf(string, "(%d, %d)", (int)triangle_matrix[0][i], (int)triangle_matrix[1][i]);
+    //     markString(string, (int)triangle_matrix[0][i], (int)triangle_matrix[1][i], 0, -10);
+    //     sprintf(string, "(%d, %d)", (int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
+    //     markString(string, (int)transformed_triangle[0][i], (int)transformed_triangle[1][i], 0, -10);
+    // }
+
 
     /* SCALING + REFLECTION */
 //    markString("SCALING and REFLECTION", 200, 220, -320, 0);
@@ -569,6 +574,13 @@ void display_transforms()   {
 //    char *string = (char*)malloc(sizeof(char)*100);
 //    sprintf(string, "X0: %d, Y0: %d, Sx: %.2f Sy: %.2f", x0, y0, sx, sy);
 //    markString(string, 200, 200, -320, 0);
+    // markString(string, 200, 200, -320, 0);
+    // for(int i=0; i<3; i++)  {
+    //     sprintf(string, "(%d, %d)", (int)triangle_matrix[0][i], (int)triangle_matrix[1][i]);
+    //     markString(string, (int)triangle_matrix[0][i], (int)triangle_matrix[1][i], 0, -10);
+    //     sprintf(string, "(%d, %d)", (int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
+    //     markString(string, (int)transformed_triangle[0][i], (int)transformed_triangle[1][i], 0, -10);
+    // }
     
     
     /* SHEARING and TRANSLATION*/
@@ -583,8 +595,6 @@ void display_transforms()   {
     float **shear_matrix = makeShearingMatrix(xshear, yshear, xref, yref);
     float **tr_matrix = makeTranslationMatrix(tx, ty);
     float **triangle_matrix = makeTriangleMatrix(xs, ys);
-    displayMatrix(shear_matrix, 3, 3);
-    displayMatrix(tr_matrix, 3, 3);
     float **transformed_triangle = multiplyMatrices(
         shear_matrix,
         multiplyMatrices(
@@ -602,29 +612,12 @@ void display_transforms()   {
     char *string = (char*)malloc(sizeof(char)*100);
     sprintf(string, "Tx: %d, Ty: %d, Yref: %d, Xref: %d, Xshear: %.2f Yshear: %.2f", tx, ty, yref, xref, xshear, yshear);
     markString(string, 200, 200, -320, 0);
-
-    /* REFLECTION */
-    // plotReflectedTriangle(xs, ys);
-
-    /* SHEARING */
-    // int yref = -1;
-    // int xref = -2;
-    // float xshear = 0.9;
-    // float yshear = 1.2;
-    // plotShearedTriangle(xs, ys, xshear, 0, yref, 0, 0, -240);
-    // plotShearedTriangle(xs, ys, 0, yshear, 0, xref, -320, 0);
-    // // label shears
-    // char *string = (char*)malloc(sizeof(char)*100);
-    // sprintf(string, "Xshear: %.2f, Yref: %d", xshear, yref);
-    // markString(string, 50, 50, 0, -240);
-    // sprintf(string, "Yshear: %.2f, Xref: %d", yshear, xref);
-    // markString(string, 50, 50, -320, 0);
-
-    /* MODIFIED ORIGIN LABELS */
-    // markString("(0, 0)", 5, 5, 0, 0);
-    // markString("(0, 0)", 5, 5, 0, -240);
-    // markString("(0, 0)", 5, 5, -320, 0);
-    // markString("(0, 0)", 5, 5, -320, -240);
+    for(int i=0; i<3; i++)  {
+        sprintf(string, "(%d, %d)", (int)triangle_matrix[0][i], (int)triangle_matrix[1][i]);
+        markString(string, (int)triangle_matrix[0][i], (int)triangle_matrix[1][i], 0, -10);
+        sprintf(string, "(%d, %d)", (int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
+        markString(string, (int)transformed_triangle[0][i], (int)transformed_triangle[1][i], 0, -10);
+    }
 
     glFlush();
 }
