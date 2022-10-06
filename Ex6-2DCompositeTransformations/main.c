@@ -529,11 +529,12 @@ void display_transforms()   {
 //    float **rot_matrix = makeRotationMatrix(theta);
 //    float **triangle_matrix = makeTriangleMatrix(xs, ys);
 //    float **transformed_triangle = multiplyMatrices(
-//                                                    tr_matrix,
-//                                                    multiplyMatrices(
-//                                                                     rot_matrix,
-//                                                                     triangle_matrix, 3, 3, 3),
-//                                                    3, 3, 3);
+    // tr_matrix,
+    // multiplyMatrices(
+    //                 rot_matrix,
+    //                 triangle_matrix, 3, 3, 3),
+    // 3, 3, 3
+    // );
 //    for(int i=0; i<3; i++)  {
 //        glVertex2d((int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
 //    }
@@ -574,20 +575,25 @@ void display_transforms()   {
     markString("SHEARING and TRANSLATION", 200, 220, -320, 0);
     int yref = -1;
     int xref = -2;
-    float xshear = 0.9;
-    float yshear = 1.2;
+    float xshear = 0.2;
+    float yshear = 0.6;
     int tx = -200;
-    int ty = -200;
+    int ty = 0;
     glBegin(GL_TRIANGLES);
     float **shear_matrix = makeShearingMatrix(xshear, yshear, xref, yref);
     float **tr_matrix = makeTranslationMatrix(tx, ty);
     float **triangle_matrix = makeTriangleMatrix(xs, ys);
+    displayMatrix(shear_matrix, 3, 3);
+    displayMatrix(tr_matrix, 3, 3);
     float **transformed_triangle = multiplyMatrices(
-                                                    shear_matrix,
-                                                    multiplyMatrices(
-                                                                     tr_matrix,
-                                                                     triangle_matrix, 3, 3, 3),
-                                                    3, 3, 3);
+        shear_matrix,
+        multiplyMatrices(
+            tr_matrix,
+            triangle_matrix, 
+            3, 3, 3),
+        3, 3, 3
+    );
+    displayMatrix(transformed_triangle, 3, 3);
     for(int i=0; i<3; i++)  {
         glVertex2d((int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
     }
