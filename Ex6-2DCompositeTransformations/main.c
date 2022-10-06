@@ -516,101 +516,30 @@ void display_transforms()   {
     glColor3f(1.0, 0.0, 0.0);
 
     /* TRANSLATION + ROTATION */
-//    markString("TRANSLATION and ROTATION", 200, 220, -320, 0);
-//    int tx = -100;
-//    int ty = -50;
-//    int theta = 30;
-//    // plot triangles
-//    glBegin(GL_TRIANGLES);
-//    float **tr_matrix = makeTranslationMatrix(tx, ty);
-//    float **rot_matrix = makeRotationMatrix(theta);
-//    float **triangle_matrix = makeTriangleMatrix(xs, ys);
-//    float **transformed_triangle = multiplyMatrices(
-    // tr_matrix,
-    // multiplyMatrices(
-    //                 rot_matrix,
-    //                 triangle_matrix, 3, 3, 3),
-    // 3, 3, 3
-    // );
-//    for(int i=0; i<3; i++)  {
-//        glVertex2d((int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
-//    }
-//    glEnd();
-//    // label translation + rotation
-//    char *string = (char*)malloc(sizeof(char)*100);
-//    sprintf(string, "Tx: %d, Ty: %d, Theta: %d", tx, ty, theta);
-//    markString(string, 200, 200, -320, 0);
-    // markString(string, 200, 200, -320, 0);
-    // for(int i=0; i<3; i++)  {
-    //     sprintf(string, "(%d, %d)", (int)triangle_matrix[0][i], (int)triangle_matrix[1][i]);
-    //     markString(string, (int)triangle_matrix[0][i], (int)triangle_matrix[1][i], 0, -10);
-    //     sprintf(string, "(%d, %d)", (int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
-    //     markString(string, (int)transformed_triangle[0][i], (int)transformed_triangle[1][i], 0, -10);
-    // }
-
-
-    /* SCALING + REFLECTION */
-//    markString("SCALING and REFLECTION", 200, 220, -320, 0);
-//     int x0 = -100;
-//     int y0 = -100;
-//     float sx = 0.75;
-//     float sy = 1.25;
-//    // plot triangles
-//    glBegin(GL_TRIANGLES);
-//    float **scale_matrix = makeScalingMatrix(sx, sy);
-//    float **refxy_matrix = makeReflectionMatrix(1, 1, 0);
-//    float **triangle_matrix = makeTriangleMatrix(xs, ys);
-//    float **transformed_triangle = multiplyMatrices(
-//                                                    scale_matrix,
-//                                                    multiplyMatrices(
-//                                                                     refxy_matrix,
-//                                                                     triangle_matrix, 3, 3, 3),
-//                                                    3, 3, 3);
-//    for(int i=0; i<3; i++)  {
-//        glVertex2d((int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
-//    }
-//    glEnd();
-//    // label translation + rotation
-//    char *string = (char*)malloc(sizeof(char)*100);
-//    sprintf(string, "X0: %d, Y0: %d, Sx: %.2f Sy: %.2f", x0, y0, sx, sy);
-//    markString(string, 200, 200, -320, 0);
-    // markString(string, 200, 200, -320, 0);
-    // for(int i=0; i<3; i++)  {
-    //     sprintf(string, "(%d, %d)", (int)triangle_matrix[0][i], (int)triangle_matrix[1][i]);
-    //     markString(string, (int)triangle_matrix[0][i], (int)triangle_matrix[1][i], 0, -10);
-    //     sprintf(string, "(%d, %d)", (int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
-    //     markString(string, (int)transformed_triangle[0][i], (int)transformed_triangle[1][i], 0, -10);
-    // }
-    
-    
-    /* SHEARING and TRANSLATION*/
-    markString("SHEARING and TRANSLATION", 200, 220, -320, 0);
-    int yref = -1;
-    int xref = -2;
-    float xshear = 0.2;
-    float yshear = 0.6;
-    int tx = -200;
-    int ty = 0;
+    markString("TRANSLATION and ROTATION", 200, 220, -320, 0);
+    int tx = -100;
+    int ty = -50;
+    int theta = 30;
+    // plot triangles
     glBegin(GL_TRIANGLES);
-    float **shear_matrix = makeShearingMatrix(xshear, yshear, xref, yref);
     float **tr_matrix = makeTranslationMatrix(tx, ty);
+    float **rot_matrix = makeRotationMatrix(theta);
     float **triangle_matrix = makeTriangleMatrix(xs, ys);
     float **transformed_triangle = multiplyMatrices(
-        shear_matrix,
-        multiplyMatrices(
-            tr_matrix,
-            triangle_matrix, 
-            3, 3, 3),
-        3, 3, 3
+    tr_matrix,
+    multiplyMatrices(
+                    rot_matrix,
+                    triangle_matrix, 3, 3, 3),
+    3, 3, 3
     );
-    displayMatrix(transformed_triangle, 3, 3);
     for(int i=0; i<3; i++)  {
         glVertex2d((int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
     }
     glEnd();
     // label translation + rotation
     char *string = (char*)malloc(sizeof(char)*100);
-    sprintf(string, "Tx: %d, Ty: %d, Yref: %d, Xref: %d, Xshear: %.2f Yshear: %.2f", tx, ty, yref, xref, xshear, yshear);
+    sprintf(string, "Tx: %d, Ty: %d, Theta: %d", tx, ty, theta);
+    markString(string, 200, 200, -320, 0);
     markString(string, 200, 200, -320, 0);
     for(int i=0; i<3; i++)  {
         sprintf(string, "(%d, %d)", (int)triangle_matrix[0][i], (int)triangle_matrix[1][i]);
@@ -618,6 +547,78 @@ void display_transforms()   {
         sprintf(string, "(%d, %d)", (int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
         markString(string, (int)transformed_triangle[0][i], (int)transformed_triangle[1][i], 0, -10);
     }
+
+
+    /* SCALING + REFLECTION */
+    // markString("SCALING and REFLECTION", 200, 220, -320, 0);
+    // int x0 = -100;
+    // int y0 = -100;
+    // float sx = 0.75;
+    // float sy = 1.25;
+    // // plot triangles
+    // glBegin(GL_TRIANGLES);
+    // float **scale_matrix = makeScalingMatrix(sx, sy);
+    // float **refxy_matrix = makeReflectionMatrix(1, 1, 0);
+    // float **triangle_matrix = makeTriangleMatrix(xs, ys);
+    // float **transformed_triangle = multiplyMatrices(
+    //     scale_matrix,
+    //     multiplyMatrices(
+    //                         refxy_matrix,
+    //                         triangle_matrix, 3, 3, 3),
+    //     3, 3, 3
+    // );
+    // for(int i=0; i<3; i++)  {
+    //     glVertex2d((int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
+    // }
+    // glEnd();
+    // // label translation + rotation
+    // char *string = (char*)malloc(sizeof(char)*100);
+    // sprintf(string, "X0: %d, Y0: %d, Sx: %.2f Sy: %.2f", x0, y0, sx, sy);
+    // markString(string, 200, 200, -320, 0);
+    // markString(string, 200, 200, -320, 0);
+    // for(int i=0; i<3; i++)  {
+    //     sprintf(string, "(%d, %d)", (int)triangle_matrix[0][i], (int)triangle_matrix[1][i]);
+    //     markString(string, (int)triangle_matrix[0][i], (int)triangle_matrix[1][i], 0, -10);
+    //     sprintf(string, "(%d, %d)", (int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
+    //     markString(string, (int)transformed_triangle[0][i], (int)transformed_triangle[1][i], -60, -10);
+    // }
+    
+    
+    /* SHEARING and TRANSLATION*/
+    // markString("SHEARING and TRANSLATION", 200, 220, -320, 0);
+    // int yref = -1;
+    // int xref = -2;
+    // float xshear = 0.2;
+    // float yshear = 0.6;
+    // int tx = -200;
+    // int ty = 0;
+    // glBegin(GL_TRIANGLES);
+    // float **shear_matrix = makeShearingMatrix(xshear, yshear, xref, yref);
+    // float **tr_matrix = makeTranslationMatrix(tx, ty);
+    // float **triangle_matrix = makeTriangleMatrix(xs, ys);
+    // float **transformed_triangle = multiplyMatrices(
+    //     shear_matrix,
+    //     multiplyMatrices(
+    //         tr_matrix,
+    //         triangle_matrix, 
+    //         3, 3, 3),
+    //     3, 3, 3
+    // );
+    // displayMatrix(transformed_triangle, 3, 3);
+    // for(int i=0; i<3; i++)  {
+    //     glVertex2d((int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
+    // }
+    // glEnd();
+    // // label translation + rotation
+    // char *string = (char*)malloc(sizeof(char)*100);
+    // sprintf(string, "Tx: %d, Ty: %d, Yref: %d, Xref: %d, Xshear: %.2f Yshear: %.2f", tx, ty, yref, xref, xshear, yshear);
+    // markString(string, 200, 200, -320, 0);
+    // for(int i=0; i<3; i++)  {
+    //     sprintf(string, "(%d, %d)", (int)triangle_matrix[0][i], (int)triangle_matrix[1][i]);
+    //     markString(string, (int)triangle_matrix[0][i], (int)triangle_matrix[1][i], 0, -10);
+    //     sprintf(string, "(%d, %d)", (int)transformed_triangle[0][i], (int)transformed_triangle[1][i]);
+    //     markString(string, (int)transformed_triangle[0][i], (int)transformed_triangle[1][i], 0, -10);
+    // }
 
     glFlush();
 }
@@ -639,10 +640,10 @@ int main(int argc, char **argv)  {
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     glutInitWindowSize(640, 480);
 
-    glutCreateWindow("Ex6A - 2D Composite Transformations");
-    glutDisplayFunc(display_transforms);
-    //glutCreateWindow("Ex6B - World to Viewport");
-    //glutDisplayFunc(display_viewport_transform);
+    // glutCreateWindow("Ex6A - 2D Composite Transformations");
+    // glutDisplayFunc(display_transforms);
+    glutCreateWindow("Ex6B - World to Viewport");
+    glutDisplayFunc(display_viewport_transform);
     
     init();
     glutMainLoop();
