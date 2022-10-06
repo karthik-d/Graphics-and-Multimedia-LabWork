@@ -85,7 +85,7 @@ void plotTriangle(int *xs, int *ys)   {
 }
 
 
-/* WINDOWING */
+/* WINDOWING ----------------------------------------------------- */
 
 struct window_constraints   {
     int x_min;
@@ -202,6 +202,8 @@ float** makeTriangleMatrix(int *xs, int *ys)  {
     return res;
 }
 
+
+/* TRANSFORMATIONS ----------------------------------------------------- */
 
 float** makeTranslationMatrix(int tx, int ty) {
     float **res = (float**)malloc(sizeof(float*)*3);
