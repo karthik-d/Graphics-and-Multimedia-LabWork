@@ -38,6 +38,15 @@ Programs, reports, documentation and screenshots implemented and designed for th
     - [Outputs](./Ex5-2DTransformations/Outputs)
     - [Report](./Ex5-2DTransformations/Report.pdf) 
     <br><br>
+    
+6. [2D Composite Transformations and Windowing in C++ using OpenGL](./Ex6-2DCompositeTransformations)
+    - Perform a combination of two transformations from *translation*, *rotation*, *scaling*, *shearing*, and *reflection*.
+    - Demonstrate all use-cases for the said transformations.
+    - Use matrix operations and homogeneous coordinates to perform the transformations.
+    - Transform an object from *World* coordinate system to a user-defined *Viewport* coordinate system.
+    - [Outputs](./Ex6-2DCompositeTransformations/Outputs)
+    - [Report](./Ex6-2DCompositeTransformations/Report.pdf) 
+    <br><br>
 
 
 ## Installation and Runtime
