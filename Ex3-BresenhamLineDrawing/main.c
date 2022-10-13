@@ -50,7 +50,7 @@ void plotLineBresenham(int start_x, int start_y, int end_x, int end_y)  {
     markString(point_label, end_x, end_y, 20, 0);
 
     int dx = end_x - start_x;
-    int dy = end_y - start_x;
+    int dy = end_y - start_y;
     float slope = dy / dx;
 
     short exchange_xy = 0;

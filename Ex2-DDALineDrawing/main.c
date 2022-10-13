@@ -84,7 +84,7 @@ void plotLineDDA(int start_x, int start_y, int end_x, int end_y)  {
         y_ = (int) round(y_val);
         plotPoint(x_, y_);
         // printf("\nx: %d, y: %d", x_, y_);
-        fflush(stdout);
+        // fflush(stdout);
     }
     char *point_label = (char*)malloc(sizeof(char)*BUFFER_SIZE);
     sprintf(point_label, "(%d, %d)", start_x, start_y);
