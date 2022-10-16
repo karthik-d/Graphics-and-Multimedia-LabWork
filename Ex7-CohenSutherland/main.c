@@ -85,11 +85,29 @@ short is_outside(RegionCode code)   {
 }
 
 
+void plotLine(Point p1, Point p2)   {
+    glBegin(GL_LINES);
+    glVertex2f(p1.x, p1.y);
+    glVertex2f(p2.x, p2.y);
+    glEnd();
+}
+
+void plotWindow(WindowConstraints window)   {
+    glColor3f(1.0, 0.0, 0.0);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(window.x_min, window.y_min);
+    glVertex2f(window.x_min, window.y_max);
+    glVertex2f(window.x_max, window.y_max);
+    glVertex2f(window.x_max, window.y_min);
+    glEnd();
+}
+
+
 void display_line_clipping()    {
     
-    WindowConstraints view_window = {10, 50, 10, 50};
-    Point start_pt = {30, 60};
-    Point end_pt = {60, 25};
+    WindowConstraints view_window = {10, 400, 10, 300};
+    Point start_pt = {30, 400};
+    Point end_pt = {500, 25};
 
     float slope = (float) (end_pt.y - start_pt.y)/(end_pt.x - start_pt.x);
     Point _start_pt = start_pt;
@@ -153,8 +171,13 @@ void display_line_clipping()    {
         is_clipped = !trivial_accept(start_pt_code, end_pt_code) && trivial_reject(start_pt_code, end_pt_code);   
     }
 
+    glClear(GL_COLOR_BUFFER_BIT);
     plotWindow(view_window);
+    glColor3f(0.0, 1.0, 0.0);
+    plotLine(start_pt, end_pt);
+    glColor3f(0.0, 0.0, 1.0);
     plotLine(_start_pt, _end_pt);
+    glFlush();
 }
 
 
@@ -162,10 +185,10 @@ void init() {
     glClearColor(1.0, 1.0, 1.0, 0.0);
     glColor3f(0.0f, 0.0f, 0.0f);
     glPointSize(2);
-    glLineWidth(1);
+    glLineWidth(2);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(-320.0, 320.0, -240.0, 240.0);
+    gluOrtho2D(0, 640.0, 0, 480.0);
 }
 
 
