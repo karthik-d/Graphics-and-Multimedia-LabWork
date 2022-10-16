@@ -145,6 +145,10 @@ void display_line_clipping()    {
     WindowConstraints view_window = {10, 400, 10, 300};
     Point start_pt = {30, 400};
     Point end_pt = {500, 25};
+    // Point start_pt = {30, 200};
+    // Point end_pt = {500, 25};
+    // Point start_pt = {30, 200};
+    // Point end_pt = {350, 25};
 
     float slope = (float) (end_pt.y - start_pt.y)/(end_pt.x - start_pt.x);
     Point _start_pt = start_pt;
