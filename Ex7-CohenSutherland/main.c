@@ -2,6 +2,23 @@
 #include <stdio.h>
 
 
+void renderSpacedBitmapString(float x, float y, void *font, char *string) {
+    char *c;
+    int x1 = x;
+    for (c = string; *c != '\0'; c++) {
+        glRasterPos2f(x1, y);
+        glutBitmapCharacter(font, *c);
+        x1 = x1 + glutBitmapWidth(font, *c);
+    }
+}
+
+void markString(char *string, int x, int y, int x_offset, int y_offset) {
+    glColor3f(255.0, 0, 0.0); // red color
+    renderSpacedBitmapString(x+x_offset, y+y_offset, GLUT_BITMAP_HELVETICA_12, string);
+    glFlush();
+}
+
+
 typedef short* RegionCode;
 
 short trivial_accept(RegionCode code_1, RegionCode code_2)  {
@@ -90,6 +107,13 @@ void plotLine(Point p1, Point p2)   {
     glVertex2f(p1.x, p1.y);
     glVertex2f(p2.x, p2.y);
     glEnd();
+
+    char *string = (char*)malloc(sizeof(char)*100);
+    sprintf(string, "(%.2f, %.2f)", p1.x, p1.y);
+    markString(string, p1.x, p1.y, 0, 0);
+
+    sprintf(string, "(%.2f, %.2f)", p2.x, p2.y);
+    markString(string, p2.x, p2.y, 0, 0);
 }
 
 void plotWindow(WindowConstraints window)   {
@@ -100,6 +124,19 @@ void plotWindow(WindowConstraints window)   {
     glVertex2f(window.x_max, window.y_max);
     glVertex2f(window.x_max, window.y_min);
     glEnd();
+
+    char *string = (char*)malloc(sizeof(char)*100);
+    sprintf(string, "(%d, %d)", window.x_min, window.y_min);
+    markString(string, window.x_min, window.y_min, 0, 0);
+
+    sprintf(string, "(%d, %d)", window.x_min, window.y_max);
+    markString(string, window.x_min, window.y_max, 0, 0);
+
+    sprintf(string, "(%d, %d)", window.x_max, window.y_max);
+    markString(string, window.x_max, window.y_max, 0, 0);
+
+    sprintf(string, "(%d, %d)", window.x_max, window.y_min);
+    markString(string, window.x_max, window.y_min, 0, 0);
 }
 
 
