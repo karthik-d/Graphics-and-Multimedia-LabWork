@@ -70,10 +70,18 @@ RegionCode get_region_code(Point pt, WindowConstraints window)    {
         code[1] = 0;
         code[0] = 0;
     }
-    printf("\n|%d%d%d%d|\n", code[0], code[1], code[2], code[3]);
+    // printf("\n() %d %d %d %d", code[0], code[1], code[2], code[3]);
 
-    return code;
-    
+    return code;   
+}
+
+short is_outside(RegionCode code)   {
+    // if any code is 1 -> lies outside -> return 1
+    short result = 0;
+    for(int i=0; i<4; i++)  {
+        result = result || code[i];
+    }
+    return result;
 }
 
 
@@ -86,7 +94,8 @@ void display_line_clipping()    {
     float slope = (float) (end_pt.y - start_pt.y)/(end_pt.x - start_pt.x);
     Point _start_pt = start_pt;
     Point _end_pt = end_pt;
-    RegionCode start_pt_code, end_pt_code;
+    RegionCode start_pt_code = get_region_code(_start_pt, view_window);
+    RegionCode end_pt_code = get_region_code(_end_pt, view_window);
     short x_bound, y_bound;
 
     Point *outside_pt = (Point*)malloc(sizeof(Point));
@@ -95,14 +104,12 @@ void display_line_clipping()    {
         !trivial_accept(start_pt_code, end_pt_code) && trivial_reject(start_pt_code, end_pt_code)    
     );
     while(is_clipped) {
-        start_pt_code = get_region_code(_start_pt, view_window);
-        end_pt_code = get_region_code(_end_pt, view_window);
 
-        if(is_outside(start_pt_code, view_window))  {
+        if(is_outside(start_pt_code))  {
             outside_pt = &_start_pt;
             outside_pt_code = start_pt_code;
         }
-        else if(is_outside(end_pt_code, view_window))   {
+        else if(is_outside(end_pt_code))   {
             outside_pt = &_end_pt;
             outside_pt_code = end_pt_code;
         }
@@ -111,36 +118,43 @@ void display_line_clipping()    {
         x_bound = -1;
         x_bound = outside_pt_code[2] - outside_pt_code[3];
         y_bound = outside_pt_code[0] - outside_pt_code[1];
-        if(x_bound==0)  {
+        if(x_bound!=0)  {
             // solve y
             if(x_bound==-1) {
                 // LEFT intersection
                 outside_pt->y = (float) outside_pt->y + slope*(view_window.x_min - outside_pt->x);
+                outside_pt->x = view_window.x_min;
             }
             else    {
                 // RIGHT intersection
-                outside_pt->y = (float) outside_pt->y + slope*(view_window.x_max - outside_pt->y);
+                outside_pt->y = (float) outside_pt->y + slope*(view_window.x_max - outside_pt->x);
+                outside_pt->x = view_window.x_max;
             }
         }
         else{            
             // solve x
             if(y_bound==-1) {
                 // BOTTOM intersection
-                outside_pt->x = (float) outside_pt->x + (1/slope)*(view_window.y_min - outside_pt->x);
+                outside_pt->x = (float) outside_pt->x + (1/slope)*(view_window.y_min - outside_pt->y);
+                outside_pt->y = view_window.y_min;
             }
-            else    {
+            else if(y_bound==1)  {
                 // TOP intersection
-                outside_pt->x = (float) outside_pt->x + (1/slope)*(view_window.y_max - outside_pt->x);
+                outside_pt->x = (float) outside_pt->x + (1/slope)*(view_window.y_max - outside_pt->y);
+                outside_pt->y = view_window.y_max;
+            }
+            else{
+                printf("\nUnexpected error\n");
             }
         }
-        display_point(_start_pt);
-        display_point(_end_pt);
-        printf("\n------------------\n");
 
-        is_clipped = trivial_accept(start_pt_code, end_pt_code) || (
-            !trivial_accept(start_pt_code, end_pt_code) && trivial_reject(start_pt_code, end_pt_code)    
-        );
+        start_pt_code = get_region_code(_start_pt, view_window);
+        end_pt_code = get_region_code(_end_pt, view_window);        
+        is_clipped = !trivial_accept(start_pt_code, end_pt_code) && trivial_reject(start_pt_code, end_pt_code);   
     }
+
+    plotWindow(view_window);
+    plotLine(_start_pt, _end_pt);
 }
 
 
