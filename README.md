@@ -48,6 +48,14 @@ Programs, reports, documentation and screenshots implemented and designed for th
     - [Report](./Ex6-2DCompositeTransformations/Report.pdf) 
     <br><br>
 
+7. [Cohen Sutherland Line Clipping in C++ using OpenGL](./Ex7-CohenSutherland)
+    - Perform line clipping using the Cohen Sutherland algorithm, for given line endpoints and viewing window bounds.
+    - Demonstrate all use-cases for line clipping.
+    - Indicate the intersection coordinates for clipped lines.
+    - Transform an object from *World* coordinate system to a user-defined *Viewport* coordinate system.
+    - [Outputs](./Ex7-CohenSutherland/Outputs)
+    - [Report](./Ex7-CohenSutherland/Report.pdf) 
+    <br><br>
 
 ## Installation and Runtime
 
