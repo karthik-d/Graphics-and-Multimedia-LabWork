@@ -37,6 +37,10 @@ struct point    {
 };
 typedef struct point Point;
 
+void display_point(Point pt)    {
+    printf("\n(%f, %f)", pt.x, pt.y);
+}
+
 RegionCode get_region_code(Point pt, WindowConstraints window)    {
     // TBRL
     RegionCode code = (short*)malloc(sizeof(short)*(4));
@@ -83,8 +87,10 @@ void display_line_clipping()    {
     Point _start_pt = start_pt;
     Point _end_pt = end_pt;
     RegionCode start_pt_code, end_pt_code;
+    short x_bound, y_bound;
 
-    Point outside_pt;
+    Point *outside_pt = (Point*)malloc(sizeof(Point));
+    RegionCode outside_pt_code;
     short is_clipped= trivial_accept(start_pt_code, end_pt_code) || (
         !trivial_accept(start_pt_code, end_pt_code) && trivial_reject(start_pt_code, end_pt_code)    
     );
@@ -93,16 +99,43 @@ void display_line_clipping()    {
         end_pt_code = get_region_code(_end_pt, view_window);
 
         if(is_outside(start_pt_code, view_window))  {
-            has_outside_pt = 1;
-            outside_pt = _start_pt;
+            outside_pt = &_start_pt;
+            outside_pt_code = start_pt_code;
         }
         else if(is_outside(end_pt_code, view_window))   {
-            has_outside_pt = 1;
-            outside_pt = _end_pt;
+            outside_pt = &_end_pt;
+            outside_pt_code = end_pt_code;
         }
 
         // find intersection
-
+        x_bound = -1;
+        x_bound = outside_pt_code[2] - outside_pt_code[3];
+        y_bound = outside_pt_code[0] - outside_pt_code[1];
+        if(x_bound==0)  {
+            // solve y
+            if(x_bound==-1) {
+                // LEFT intersection
+                outside_pt->y = (float) outside_pt->y + slope*(view_window.x_min - outside_pt->x);
+            }
+            else    {
+                // RIGHT intersection
+                outside_pt->y = (float) outside_pt->y + slope*(view_window.x_max - outside_pt->y);
+            }
+        }
+        else{            
+            // solve x
+            if(y_bound==-1) {
+                // BOTTOM intersection
+                outside_pt->x = (float) outside_pt->x + (1/slope)*(view_window.y_min - outside_pt->x);
+            }
+            else    {
+                // TOP intersection
+                outside_pt->x = (float) outside_pt->x + (1/slope)*(view_window.y_max - outside_pt->x);
+            }
+        }
+        display_point(_start_pt);
+        display_point(_end_pt);
+        printf("\n------------------\n");
 
         is_clipped = trivial_accept(start_pt_code, end_pt_code) || (
             !trivial_accept(start_pt_code, end_pt_code) && trivial_reject(start_pt_code, end_pt_code)    
