@@ -15,7 +15,7 @@ short trivial_accept(RegionCode code_1, RegionCode code_2)  {
 
 short trivial_reject(RegionCode code_1, RegionCode code_2)  {
     // all zeros in result implies reject the reject! --> return 1
-    short result = 1;
+    short result = 0;
     for(int i=0; i<4; i++)  {
         result = result || (code_1[i] && code_2[i]); 
     }
@@ -32,8 +32,8 @@ struct window_constraints   {
 typedef struct window_constraints WindowConstraints;
 
 struct point    {
-    int x;
-    int y;
+    float x;
+    float y;
 };
 typedef struct point Point;
 
@@ -66,6 +66,7 @@ RegionCode get_region_code(Point pt, WindowConstraints window)    {
         code[1] = 0;
         code[0] = 0;
     }
+    printf("\n|%d%d%d%d|\n", code[0], code[1], code[2], code[3]);
 
     return code;
     
@@ -78,15 +79,35 @@ void display_line_clipping()    {
     Point start_pt = {30, 60};
     Point end_pt = {60, 25};
 
-    RegionCode start_pt_code = get_region_code(start_pt, view_window);
-    RegionCode end_pt_code = get_region_code(end_pt, view_window);
+    float slope = (float) (end_pt.y - start_pt.y)/(end_pt.x - start_pt.x);
+    Point _start_pt = start_pt;
+    Point _end_pt = end_pt;
+    RegionCode start_pt_code, end_pt_code;
 
-    printf(">> %d\n", trivial_accept(start_pt_code, end_pt_code));
-    printf(">> %d\n", trivial_reject(start_pt_code, end_pt_code));
-    short is_clipped = trivial_accept(start_pt_code, end_pt_code) || (
+    Point outside_pt;
+    short is_clipped= trivial_accept(start_pt_code, end_pt_code) || (
         !trivial_accept(start_pt_code, end_pt_code) && trivial_reject(start_pt_code, end_pt_code)    
     );
-    printf("--> %d", is_clipped);
+    while(is_clipped) {
+        start_pt_code = get_region_code(_start_pt, view_window);
+        end_pt_code = get_region_code(_end_pt, view_window);
+
+        if(is_outside(start_pt_code, view_window))  {
+            has_outside_pt = 1;
+            outside_pt = _start_pt;
+        }
+        else if(is_outside(end_pt_code, view_window))   {
+            has_outside_pt = 1;
+            outside_pt = _end_pt;
+        }
+
+        // find intersection
+
+
+        is_clipped = trivial_accept(start_pt_code, end_pt_code) || (
+            !trivial_accept(start_pt_code, end_pt_code) && trivial_reject(start_pt_code, end_pt_code)    
+        );
+    }
 }
 
 
