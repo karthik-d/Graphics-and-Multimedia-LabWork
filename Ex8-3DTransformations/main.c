@@ -236,7 +236,7 @@ void display_rotation_translation_scaling() {
 
     int theta_deltas[3] = {10, 5, 4};
     float scale_deltas[3] = {0.005, 0.01, 0.02};
-    float tr_deltas[3] = {0.01, 0.02, 0.005};
+    float tr_deltas[3] = {0.02, 0.04, 0.01};
 
     for(int i=0; i<3; i++)  {
         // rotation
@@ -383,7 +383,7 @@ int main(int argc, char** argv) {
     glutDisplayFunc(display_rotation_translation_scaling); 
     glutReshapeFunc(reshape);      
     init();
-    Timer(100);
+    Timer(200);
     glutMainLoop();                
     return 0;
 }
