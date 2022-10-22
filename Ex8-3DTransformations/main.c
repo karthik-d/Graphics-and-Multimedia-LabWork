@@ -5,24 +5,6 @@
 #define PI 3.141592654
 
 
-void renderSpacedBitmapString(float x, float y, void *font, char *string) {
-    char *c;
-    int x1 = x;
-    for (c = string; *c != '\0'; c++) {
-        glRasterPos2f(x1, y);
-        glutBitmapCharacter(font, *c);
-        x1 = x1 + glutBitmapWidth(font, *c);
-    }
-}
-
-
-void markString(char *string, int x, int y, int x_offset, int y_offset) {
-    glColor3f(255.0, 0, 0.0); // red color
-    renderSpacedBitmapString(x+x_offset, y+y_offset, GLUT_BITMAP_HELVETICA_12, string);
-    glFlush();
-}
-
-
 float** multiplyMatrices(float **m1, float **m2, int r1, int c1, int c2)    {
     // assume compatible matrices
     float **res = (float**)malloc(sizeof(float*)*r1);
@@ -194,37 +176,6 @@ float** makeZRotationMatrix(int theta) {
     res[0][1] = -sin(theta*PI/180);
     res[1][0] = -res[0][1];
     return res;
-}
-
-
-void transformAndPlot(double T[4][4], double P[4][1]){
-    double new_point[4][1] = {0,0,0, 0};
-    
-    for (int i=0;i<4;i++){
-    
-        for (int j=0;j<1;j++){
-        
-            new_point[i][j] = 0;
-            
-            for (int k=0;k<4;k++){
-                new_point[i][j]+= T[i][k]*P[k][j];
-            }
-        }
-    }
-    glVertex3f(new_point[0][0], new_point[1][0], new_point[2][0]);
-}
-
-void rotateZ(double x, double y,double z, double theta){
-    double angle = theta*3.14/180;
-    double rotation_Z_matrix[4][4] = {
-        cos(angle), -sin(angle), 0, 0,
-        sin(angle), cos(angle), 0,0,
-        0,0,1,0,
-        0,0,0,1
-    };
-    
-    double point_matrix[4][1] = {x, y, z, 1};
-    transformAndPlot(rotation_Z_matrix, point_matrix);
 }
  
 
