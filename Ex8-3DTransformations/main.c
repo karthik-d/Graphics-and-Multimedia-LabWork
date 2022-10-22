@@ -94,11 +94,11 @@ float** makeTriangleMatrix(float *xs, float *ys, float *zs)  {
 }
 
 
-float** makeTranslationMatrix(int tx, int ty) {
-    float **res = (float**)malloc(sizeof(float*)*3);
-    for(int i=0; i<3; i++) {
-        *(res+i) = (float*)malloc(sizeof(float)*3);
-        for(int j=0; j<3; j++) {
+float** makeTranslationMatrix(float tx, float ty, float tz) {
+    float **res = (float**)malloc(sizeof(float*)*4);
+    for(int i=0; i<4; i++) {
+        *(res+i) = (float*)malloc(sizeof(float)*4);
+        for(int j=0; j<4; j++) {
             if(i==j){
                 res[i][j] = 1;
             }
@@ -107,8 +107,29 @@ float** makeTranslationMatrix(int tx, int ty) {
             }
         }
     }
-    res[0][2] = tx;
-    res[1][2] = ty;
+    res[0][3] = tx;
+    res[1][3] = ty;
+    res[2][3] = tz;
+    return res;
+}
+
+
+float** makeScalingMatrix(float sx, float sy, float sz)   {
+    float **res = (float**)malloc(sizeof(float*)*4);
+    for(int i=0; i<4; i++) {
+        *(res+i) = (float*)malloc(sizeof(float*)*4);
+        for(int j=0; j<4; j++) {
+            if(i==j){
+                res[i][j] = 1;
+            }
+            else{
+                res[i][j] = 0;
+            }
+        }
+    }
+    res[0][0] = sx;
+    res[1][1] = sy;
+    res[2][2] = sz;
     return res;
 }
 
@@ -176,27 +197,6 @@ float** makeZRotationMatrix(int theta) {
 }
 
 
-float** makeScalingMatrix(float sx, float sy, float sz)   {
-    float **res = (float**)malloc(sizeof(float*)*4);
-    for(int i=0; i<4; i++) {
-        *(res+i) = (float*)malloc(sizeof(float*)*4);
-        for(int j=0; j<4; j++) {
-            if(i==j){
-                res[i][j] = 1;
-            }
-            else{
-                res[i][j] = 0;
-            }
-        }
-    }
-    res[0][0] = sx;
-    res[1][1] = sy;
-    res[2][2] = sz;
-    displayMatrix(res, 4, 4);
-    return res;
-}
-
-
 void transformAndPlot(double T[4][4], double P[4][1]){
     double new_point[4][1] = {0,0,0, 0};
     
@@ -232,11 +232,11 @@ void display_rotation_translation_scaling() {
 
     static int theta_vals[3] = {0, 0, 0};
     static float scale_vals[3] = {0, 0, 0};
-    static int tr_vals[3] = {0, 0, 0};
+    static float tr_vals[3] = {0, 0, 0};
 
     int theta_deltas[3] = {10, 5, 4};
     float scale_deltas[3] = {0.005, 0.01, 0.02};
-    int tr_deltas[3] = {10, 5, 6};
+    float tr_deltas[3] = {0.01, 0.02, 0.005};
 
     for(int i=0; i<3; i++)  {
         // rotation
@@ -254,8 +254,8 @@ void display_rotation_translation_scaling() {
             scale_vals[i] += scale_deltas[i];
         }
         // translation
-        if(tr_vals[i]>100){
-            tr_vals[i] = -100;
+        if(tr_vals[i]>2){
+            tr_vals[i] = -2;
         }
         else{
             tr_vals[i] += tr_deltas[i];
@@ -292,8 +292,7 @@ void display_rotation_translation_scaling() {
 
     float **trans_triangle;
     glBegin(GL_TRIANGLES);
-
-    // Front      
+ 
     for(int i=0; i<4; i++)  {
         if(i==0){
             glColor3f(1.0f, 0.0f, 0.0f);     // Red
@@ -307,6 +306,8 @@ void display_rotation_translation_scaling() {
         else if(i==3){
             glColor3f(0.1f, 1.0f, 1.0f);     // White
         }
+
+        // rotate   
         trans_triangle = multiplyMatrices(
             makeZRotationMatrix(theta_vals[2]),
             multiplyMatrices(
@@ -319,9 +320,17 @@ void display_rotation_translation_scaling() {
             ), 4, 4, 3
         );
 
+        // scale
         // displayMatrix(makeScalingMatrix(scale_vals[0], scale_vals[1], scale_vals[2]), 4, 4);
         trans_triangle = multiplyMatrices(
             makeScalingMatrix(scale_vals[0], scale_vals[1], scale_vals[2]),
+            trans_triangle,
+            4, 4, 3
+        );
+
+        // translate
+        trans_triangle = multiplyMatrices(
+            makeTranslationMatrix(tr_vals[0], tr_vals[1], tr_vals[2]),
             trans_triangle,
             4, 4, 3
         );
