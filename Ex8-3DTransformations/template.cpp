@@ -5,8 +5,8 @@
 //  Created by csea39 on 10/20/22.
 //
 
-#include <GLUT/glut.h>  // GLUT, include glu.h and gl.h
-#include<cmath>
+#include <GL/glut.h>  // GLUT, include glu.h and gl.h
+#include<math.h>
 double theta;
 /* Global variables */
 char title[] = "3D Shapes";
@@ -71,27 +71,22 @@ void display() {
     
       // Front
       
-      glColor3f(1.0f, 0.0f, 0.0f);     // Red
-      rotateZ( 0.0, 1.0, 0.0, theta);
-      glColor3f(1.0f, 0.0f, 0.0f);
-    rotateZ( -1.0, -1.0, 1.0, theta);
-      glColor3f(1.0f, 0.0f, 0.0f);
-      rotateZ(1.0, -1.0, 1.0, theta);
+      // Front      
+    glColor3f(1.0f, 0.0f, 0.0f);     // Red
+    glVertex3f(0.0, 1.0, 0.0);
+    glVertex3f( -1.0, -1.0, 1.0);
+    glVertex3f(1.0, -1.0, 1.0);
 
     // Right
       glColor3f(0.0f, 1.0f, 0.0f);     // Green
       rotateZ(0.0f, 1.0f, 0.0f, theta);
-      glColor3f(0.0f, 1.0f, 0.0f);     // Green
       rotateZ(1.0f, -1.0f, 1.0f, theta);
-      glColor3f(0.0f, 1.0f, 0.0f);     // Green
       rotateZ(1.0f, -1.0f, -1.0f, theta);
  
       // Back
       glColor3f(0.0f, 0.0f, 1.0f);     // Blue
     rotateZ(0.0f, 1.0f, 0.0f, theta);
-      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
     rotateZ(1.0f, -1.0f, -1.0f, theta);
-      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
     rotateZ(-1.0f, -1.0f, -1.0f, theta);
  
       // Left

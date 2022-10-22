@@ -1,5 +1,6 @@
-#include <GL/glut.h>  
-#include <math>
+#include <GL/glut.h>
+#include <stdio.h>  
+#include <math.h>
 
 #define PI 3.141592654
 
@@ -51,11 +52,14 @@ void displayMatrix(float **matrix, int r, int c)  {
 
 void plotDivisionLines()    {
     glBegin(GL_LINES);
-    glVertex2d(-320, 0);
-    glVertex2d(320, 0);
-    glVertex2d(0, -240);
-    glVertex2d(0, 240);
+    glVertex3d(-320, 0, 0);
+    glVertex3d(320, 0, 0);
+    glVertex3d(0, -240, 0);
+    glVertex3d(0, 240, 0);
+    glVertex3d(-320, 240, -100);
+    glVertex3d(320, -240, 100);
     glEnd();
+    glFlush();
 }
 
 
@@ -66,24 +70,25 @@ void plotPoint(int x, int y, int x_offset, int y_offset)    {
 }
 
 
-void plotTriangle(int *xs, int *ys)   {
+void plotTriangle(float *xs, float *ys, float *zs)   {
     glBegin(GL_TRIANGLES);
     for(int i=0; i<3; i++)  {
-        glVertex2d(xs[i], ys[i]);
+        glVertex3f(xs[i], ys[i], zs[i]);
     }
     glEnd();
 }
 
 
-float** makeTriangleMatrix(int *xs, int *ys)  {
-    float **res = (float**)malloc(sizeof(float*)*3);
-    for(int i=0; i<3; i++) {
+float** makeTriangleMatrix(float *xs, float *ys, float *zs)  {
+    float **res = (float**)malloc(sizeof(float*)*4);
+    for(int i=0; i<4; i++) {
         *(res+i) = (float*)malloc(sizeof(float)*3);
     }
     for(int i=0; i<3; i++) {
         res[0][i] = xs[i];
         res[1][i] = ys[i];
-        res[2][i] = 1;
+        res[2][i] = zs[i];
+        res[3][i] = 1;
     }
     return res;
 }
@@ -108,11 +113,11 @@ float** makeTranslationMatrix(int tx, int ty) {
 }
 
 
-float** makeRotationMatrix(int theta) {
-    float **res = (float**)malloc(sizeof(float*)*3);
-    for(int i=0; i<3; i++) {
-        *(res+i) = (float*)malloc(sizeof(float*)*3);
-        for(int j=0; j<3; j++) {
+float** makeZRotationMatrix(int theta) {
+    float **res = (float**)malloc(sizeof(float*)*4);
+    for(int i=0; i<4; i++) {
+        *(res+i) = (float*)malloc(sizeof(float*)*4);
+        for(int j=0; j<4; j++) {
             if(i==j){
                 res[i][j] = 1;
             }
@@ -216,44 +221,74 @@ void display_rotation_translation_scaling() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
     glMatrixMode(GL_MODELVIEW);   
     glLoadIdentity();                
-    glTranslatef(0.0f, 0.0f, -7.0f);  
+    glTranslatef(0.0f, 0.0f, -7.0f); 
 
+    glColor3f(1.0f, 1.0f, 1.0f);     
+    plotDivisionLines(); 
+
+    // front, right, back, left
+    float triangle_xs[4][3] = {
+        {0.0f, -1.0f, 1.0f},
+        {0.0f, 1.0f, 1.0f},
+        {0.0f, 1.0f, -1.0f},
+        {0.0f, -1.0f, -1.0f}
+    };
+    float triangle_ys[4][3] = {
+        {1.0f, -1.0f, -1.0f},
+        {1.0f, -1.0f, -1.0f},
+        {1.0f, -1.0f, -1.0f},
+        {1.0f, -1.0f, -1.0f}
+    };
+    float triangle_zs[4][3] = {
+        {0.0f, 1.0f, 1.0f},
+        {0.0f, 1.0f, -1.0f},
+        {0.0f, -1.0f, -1.0f},
+        {0.0f, -1.0f, 1.0f},
+    };
+
+    float **trans_triangle;
     glBegin(GL_TRIANGLES);
 
     // Front      
-    glColor3f(1.0f, 0.0f, 0.0f);     // Red
-    rotateZ( 0.0, 1.0, 0.0, theta);
-    glColor3f(1.0f, 0.0f, 0.0f);
-    rotateZ( -1.0, -1.0, 1.0, theta);
-    glColor3f(1.0f, 0.0f, 0.0f);
-    rotateZ(1.0, -1.0, 1.0, theta);
-
-    // Right
-    glColor3f(0.0f, 1.0f, 0.0f);     // Green
-    rotateZ(0.0f, 1.0f, 0.0f, theta);
-    glColor3f(0.0f, 1.0f, 0.0f);     // Green
-    rotateZ(1.0f, -1.0f, 1.0f, theta);
-    glColor3f(0.0f, 1.0f, 0.0f);     // Green
-    rotateZ(1.0f, -1.0f, -1.0f, theta);
-
-    // Back
-    glColor3f(0.0f, 0.0f, 1.0f);     // Blue
-    rotateZ(0.0f, 1.0f, 0.0f, theta);
-    glColor3f(0.0f, 0.0f, 1.0f);     // Blue
-    rotateZ(1.0f, -1.0f, -1.0f, theta);
-    glColor3f(0.0f, 0.0f, 1.0f);     // Blue
-    rotateZ(-1.0f, -1.0f, -1.0f, theta);
-
-    // Left
-    glColor3f(1.0f,0.0f,0.0f);       // Red
-    rotateZ( 0.0f, 1.0f, 0.0f, theta);
-    glColor3f(0.0f,0.0f,1.0f);       // Blue
-    rotateZ(-1.0f,-1.0f,-1.0f, theta);
-    glColor3f(0.0f,1.0f,0.0f);       // Green
-    rotateZ(-1.0f,-1.0f, 1.0f, theta);
+    for(int i=0; i<4; i++)  {
+        if(i==0){
+            glColor3f(1.0f, 0.0f, 0.0f);     // Red
+        }
+        else if(i==1){
+            glColor3f(0.0f, 1.0f, 0.0f);     // Green
+        }
+        else if(i==2){
+            glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+        }
+        else if(i==3){
+            glColor3f(0.1f, 1.0f, 1.0f);     // White
+        }
+        trans_triangle = multiplyMatrices(
+            makeZRotationMatrix(theta_vals[2]),
+            makeTriangleMatrix(triangle_xs[i], triangle_ys[i], triangle_zs[i]),
+            4, 4, 3
+        );
+        displayMatrix(trans_triangle, 4, 3);
+        for(int i=0; i<3; i++)  {
+            glVertex3f(trans_triangle[0][i], trans_triangle[1][i], trans_triangle[2][i]);
+        }
+    }
 
     glEnd();   
     glutSwapBuffers(); 
+    glFlush();
+}
+
+
+void reshape(GLsizei width, GLsizei height) {  
+   // Compute aspect ratio of the new window
+   if (height == 0) height = 1;               
+   GLfloat aspect = (GLfloat)width / (GLfloat)height; 
+   // Set the viewport to cover the new window
+   glViewport(0, 0, width, height);
+   glMatrixMode(GL_PROJECTION); 
+   glLoadIdentity();             
+   gluPerspective(45.0f, aspect, 0.1f, 100.0f);
 }
  
 
@@ -274,15 +309,15 @@ void init() {
 
 
 int main(int argc, char** argv) {
-    theta = 0.5;
     glutInit(&argc, argv);           
     glutInitDisplayMode(GLUT_DOUBLE);
     glutInitWindowSize(640, 480);   
-    glutInitWindowPosition(50, 50); 
-    glutCreateWindow(title);         
-    glutDisplayFunc(display);       
+    glutInitWindowPosition(50, 50);
+    glutCreateWindow("Ex8 - 3D Transformations");         
+    glutDisplayFunc(display_rotation_translation_scaling); 
+    glutReshapeFunc(reshape);      
     init();
-    Timer(500);
+    // Timer(500);
     glutMainLoop();                
     return 0;
 }
