@@ -7,7 +7,7 @@ void renderSpacedBitmapString(float x, float y, void *font, char *string) {
     int x1 = x;
     for (c = string; *c != '\0'; c++) {
         glRasterPos2f(x1, y);
-        glutBitmapCharacter(font, *c);
+        glutBitmapCharacter(font, *c); 
         x1 = x1 + glutBitmapWidth(font, *c);
     }
 }

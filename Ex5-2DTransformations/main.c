@@ -405,13 +405,13 @@ void display_transforms()   {
     glColor3f(1.0, 0.0, 0.0);
 
     /* TRANSLATION */
-    int tx = -100;
-    int ty = -50;
-    plotTranslatedTriangle(xs, ys, -100, -50);
-    // label translation
-    char *string = (char*)malloc(sizeof(char)*100);
-    sprintf(string, "Tx: %d, Ty: %d", tx, ty);
-    markString(string, 200, 200, -320, 0);
+    // int tx = -100;
+    // int ty = -50;
+    // plotTranslatedTriangle(xs, ys, -100, -50);
+    // // label translation
+    // char *string = (char*)malloc(sizeof(char)*100);
+    // sprintf(string, "Tx: %d, Ty: %d", tx, ty);
+    // markString(string, 200, 200, -320, 0);
 
     /* ROTATIONS */
     // int x0 = -100;
@@ -439,7 +439,7 @@ void display_transforms()   {
     // plotScaledTriangle(xs, ys, -40, -60, sx1, sy2, -320, -240);
 
     /* REFLECTION */
-    // plotReflectedTriangle(xs, ys);
+    plotReflectedTriangle(xs, ys);
 
     /* SHEARING */
     // int yref = -1;
