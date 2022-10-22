@@ -113,6 +113,48 @@ float** makeTranslationMatrix(int tx, int ty) {
 }
 
 
+float** makeXRotationMatrix(int theta) {
+    float **res = (float**)malloc(sizeof(float*)*4);
+    for(int i=0; i<4; i++) {
+        *(res+i) = (float*)malloc(sizeof(float*)*4);
+        for(int j=0; j<4; j++) {
+            if(i==j){
+                res[i][j] = 1;
+            }
+            else{
+                res[i][j] = 0;
+            }
+        }
+    }
+    res[2][2] = cos(theta*PI/180);
+    res[0][0] = res[2][2];
+    res[2][0] = -sin(theta*PI/180);
+    res[0][2] = -res[2][0];
+    return res;
+}
+
+
+float** makeYRotationMatrix(int theta) {
+    float **res = (float**)malloc(sizeof(float*)*4);
+    for(int i=0; i<4; i++) {
+        *(res+i) = (float*)malloc(sizeof(float*)*4);
+        for(int j=0; j<4; j++) {
+            if(i==j){
+                res[i][j] = 1;
+            }
+            else{
+                res[i][j] = 0;
+            }
+        }
+    }
+    res[1][1] = cos(theta*PI/180);
+    res[2][2] = res[1][1];
+    res[1][2] = -sin(theta*PI/180);
+    res[2][1] = -res[1][2];
+    return res;
+}
+
+
 float** makeZRotationMatrix(int theta) {
     float **res = (float**)malloc(sizeof(float*)*4);
     for(int i=0; i<4; i++) {
@@ -134,11 +176,11 @@ float** makeZRotationMatrix(int theta) {
 }
 
 
-float** makeScalingMatrix(float sx, float sy)   {
-    float **res = (float**)malloc(sizeof(float*)*3);
-    for(int i=0; i<3; i++) {
-        *(res+i) = (float*)malloc(sizeof(float*)*3);
-        for(int j=0; j<3; j++) {
+float** makeScalingMatrix(float sx, float sy, float sz)   {
+    float **res = (float**)malloc(sizeof(float*)*4);
+    for(int i=0; i<4; i++) {
+        *(res+i) = (float*)malloc(sizeof(float*)*4);
+        for(int j=0; j<4; j++) {
             if(i==j){
                 res[i][j] = 1;
             }
@@ -149,6 +191,8 @@ float** makeScalingMatrix(float sx, float sy)   {
     }
     res[0][0] = sx;
     res[1][1] = sy;
+    res[2][2] = sz;
+    displayMatrix(res, 4, 4);
     return res;
 }
 
@@ -187,11 +231,11 @@ void rotateZ(double x, double y,double z, double theta){
 void display_rotation_translation_scaling() {
 
     static int theta_vals[3] = {0, 0, 0};
-    static int scale_vals[3] = {0, 0, 0};
+    static float scale_vals[3] = {0, 0, 0};
     static int tr_vals[3] = {0, 0, 0};
 
     int theta_deltas[3] = {10, 5, 4};
-    float scale_deltas[3] = {0.05, 0.1, 0.2};
+    float scale_deltas[3] = {0.005, 0.01, 0.02};
     int tr_deltas[3] = {10, 5, 6};
 
     for(int i=0; i<3; i++)  {
@@ -203,8 +247,8 @@ void display_rotation_translation_scaling() {
             theta_vals[i] += theta_deltas[i];
         }
         // scaling
-        if(scale_vals[i]>2){
-            scale_vals[i] = 0.5;
+        if(scale_vals[i]>1.2){
+            scale_vals[i] = 0.8;
         }
         else{
             scale_vals[i] += scale_deltas[i];
@@ -265,10 +309,23 @@ void display_rotation_translation_scaling() {
         }
         trans_triangle = multiplyMatrices(
             makeZRotationMatrix(theta_vals[2]),
-            makeTriangleMatrix(triangle_xs[i], triangle_ys[i], triangle_zs[i]),
+            multiplyMatrices(
+                makeYRotationMatrix(theta_vals[1]),
+                multiplyMatrices(
+                    makeXRotationMatrix(theta_vals[0]),
+                    makeTriangleMatrix(triangle_xs[i], triangle_ys[i], triangle_zs[i]),
+                    4, 4, 3
+                ), 4, 4, 3
+            ), 4, 4, 3
+        );
+
+        // displayMatrix(makeScalingMatrix(scale_vals[0], scale_vals[1], scale_vals[2]), 4, 4);
+        trans_triangle = multiplyMatrices(
+            makeScalingMatrix(scale_vals[0], scale_vals[1], scale_vals[2]),
+            trans_triangle,
             4, 4, 3
         );
-        displayMatrix(trans_triangle, 4, 3);
+
         for(int i=0; i<3; i++)  {
             glVertex3f(trans_triangle[0][i], trans_triangle[1][i], trans_triangle[2][i]);
         }
@@ -317,7 +374,7 @@ int main(int argc, char** argv) {
     glutDisplayFunc(display_rotation_translation_scaling); 
     glutReshapeFunc(reshape);      
     init();
-    // Timer(500);
+    Timer(100);
     glutMainLoop();                
     return 0;
 }
