@@ -292,7 +292,7 @@ void display_rotation_translation_scaling() {
     }
 
     glEnd();   
-    glutSwapBuffers(); 
+    // glutSwapBuffers(); 
     glFlush();
 }
 
@@ -318,21 +318,24 @@ void Timer(int value){
 void init() {
    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
    glClearDepth(1.0f);                   
-   glEnable(GL_DEPTH_TEST);
-   glDepthFunc(GL_LEQUAL);   
-   glShadeModel(GL_SMOOTH);  
-   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  
+//    glEnable(GL_DEPTH_TEST);
+//    glDepthFunc(GL_LEQUAL);   
+//    glShadeModel(GL_SMOOTH);  
+//    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  
 }
 
 
 int main(int argc, char** argv) {
     glutInit(&argc, argv);           
-    glutInitDisplayMode(GLUT_DOUBLE);
-    glutInitWindowSize(640, 480);   
-    glutInitWindowPosition(50, 50);
+    // glutInitDisplayMode(GLUT_DOUBLE);
+    // glutInitWindowSize(640, 480);   
+    // glutInitWindowPosition(50, 50);
     glutCreateWindow("Ex8 - 3D Transformations");         
     glutDisplayFunc(display_rotation_translation_scaling); 
-    glutReshapeFunc(reshape);      
+    glViewport(0, 0, 640, 480);
+    glMatrixMode(GL_PROJECTION); 
+    gluPerspective(45.0f, (float)640/480, 0.1f, 100.0f);
+    // glutReshapeFunc(reshape);      
     init();
     Timer(200);
     glutMainLoop();                
