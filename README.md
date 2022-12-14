@@ -56,6 +56,15 @@ Programs, reports, documentation and screenshots implemented and designed for th
     - [Outputs](./Ex7-CohenSutherland/Outputs)
     - [Report](./Ex7-CohenSutherland/Report.pdf) 
     <br><br>
+    
+8. [3D Transformations in C++ using OpenGL](./Ex8-3DTransformations)
+    - Perform 2D transformations, namely *translation*, *rotation*, and *scaling*.
+    - Demonstrate all use-cases for the said transformations.
+    - Use matrix operations and homogeneous coordinates to perform the transformations.
+    - [Outputs](./Ex8-3DTransformations/Outputs)
+    - [Report](./Ex8-3DTransformations/Report.pdf) 
+    <br><br>
+    
 
 ## Installation and Runtime
 
