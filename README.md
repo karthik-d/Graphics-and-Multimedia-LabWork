@@ -1,6 +1,6 @@
 # UCS1712: Graphics and Multimedia - Lab Work
 
-Programs, reports, documentation, and screenshots implemented and designed for the laboratory coursework in **UCS1712: Graphics and Multimedia Lab**.
+Programs, reports, documentation, and output snapshots of implemented and designed experiments for the laboratory coursework in **UCS1712: Graphics and Multimedia Lab**, [SSN College of Engineering](https://www.ssn.edu.in/college-of-engineering/cse-faculty/), Chennai, India.
 
 [Link to Compiled Documentation of Experiments](./Compiled-Record-Work.pdf)
 
